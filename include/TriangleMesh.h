@@ -13,7 +13,7 @@
 class TriangleMesh : public Renderable {
 public:
     TriangleMesh();
-    TriangleMesh(std::vector<glm::vec4> vertices, std::vector<glm::uvec3> faces,
+    TriangleMesh(std::vector<glm::vec4> vertices, std::vector<glm::vec4> normals, std::vector<glm::uvec3> faces,
                  const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader,
                  std::vector<ShaderUniform> uniforms);
 
@@ -21,7 +21,7 @@ public:
 
     virtual ~TriangleMesh();
 private:
-    std::vector<glm::vec4> vertices;
+    std::vector<glm::vec4> vertices, normals;
     std::vector<glm::uvec3> faces;
     std::vector<unsigned> vbo;
     unsigned vao;

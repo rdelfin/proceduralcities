@@ -12,8 +12,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "debuggl.h"
-//#include "menger.h"
-//#include "camera.h"
+#include <Renderable.h>
+#include <TriangleMesh.h>
 
 
 int window_width = 800, window_height = 600;
@@ -53,7 +53,28 @@ int main() {
     std::cout << "Renderer: " << renderer << "\n";
     std::cout << "OpenGL version supported:" << version << "\n";
 
+    // Create objects
+    std::vector<glm::vec4> vertices;
+    std::vector<glm::uvec3> faces;
+    std::vector<glm::vec4> normals;
+    //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
+
     while (!glfwWindowShouldClose(window)) {
+        // Setup some basic window stuff.
+        glfwGetFramebufferSize(window, &window_width, &window_height);
+        glViewport(0, 0, window_width, window_height);
+        glClearColor(0.390625f, 0.58203125f, 0.92578125f, 1.0f);           // Cornflower blue, according to microsoft, the best background color
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_MULTISAMPLE);
+        glEnable(GL_BLEND);
+        glEnable(GL_CULL_FACE);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDepthFunc(GL_LESS);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glCullFace(GL_BACK);
+
+        //mesh.draw();
+
         // Poll and swap.
         glfwPollEvents();
         glfwSwapBuffers(window);

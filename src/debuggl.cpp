@@ -1,4 +1,4 @@
-#include "../include/debuggl.h"
+#include "debuggl.h"
 #include <portable_gl.h>
 
 const char* DebugGLErrorToString(int error) {

@@ -7,6 +7,8 @@
 #include <string>
 #include <functional>
 #include <vector>
+#include <fstream>
+#include <GL/glew.h>
 
 typedef enum {
     BINDER_MATRIX4_F,
@@ -63,10 +65,10 @@ public:
      * @param program String representing either the program or the path to the shader file
      * @param isFile True if program represents a file path, and false if it contains the program
      */
-    Shader(std::string program, bool isFile = true) : empty(false), program(program) {
+    Shader(std::string program, bool isFile = true) : program(program) {
         if(isFile) {
             // If file is true, `s` is a file name. Read in from file
-            std::ifstream reader(program);
+            std::ifstream reader(program, std::ios_base::in);
             this->program = std::string(std::istreambuf_iterator<char>(reader),
                                         std::istreambuf_iterator<char>());
             reader.close();
