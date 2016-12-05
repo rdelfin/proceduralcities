@@ -18,24 +18,24 @@ TriangleMesh::TriangleMesh() {
 
 }
 
-TriangleMesh::TriangleMesh(std::vector<glm::vec4> vertices, std::vector<glm::vec4> normals, std::vector<glm::uvec3> faces,
+TriangleMesh::TriangleMesh(const std::vector<glm::vec4>& vertices, const std::vector<glm::vec4>& normals, const std::vector<glm::uvec3>& faces,
                            const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader,
-                           std::vector<ShaderUniform> uniforms)
+                           const std::vector<ShaderUniform>& uniforms)
     : vertices(vertices), normals(normals), faces(faces), program(uniforms, vertexShader, geometryShader, fragmentShader) {
     GLint programId = program.getProgramId();
 
     // Generate VAO
-    CHECK_GL_ERROR(glGenVertexArrays(1, (GLuint*)&vao));
+    CHECK_GL_ERROR(glGenVertexArrays(1, &vao));
     CHECK_GL_ERROR(glBindVertexArray(vao));
 
     // Generate VBO
     vbo.resize(3);
-    CHECK_GL_ERROR(glGenBuffers(GL_ARRAY_BUFFER, vbo.data()));
+    CHECK_GL_ERROR(glGenBuffers(3, vbo.data()));
 
     // Bind vertices
     GLuint verticesPosition = 0;
     CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, vbo[verticesPosition]));
-    CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER, vertices.size() * 4, vertices.data(), GL_STATIC_DRAW));
+    CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * 4, this->vertices.data(), GL_STATIC_DRAW));
     CHECK_GL_ERROR(glVertexAttribPointer(verticesPosition, 4, GL_FLOAT, GL_FALSE, 0, 0));
     CHECK_GL_ERROR(glEnableVertexAttribArray(verticesPosition));
     CHECK_GL_ERROR(glBindAttribLocation(programId, verticesPosition, VERTEX_VBO_NAME.c_str()));
@@ -43,7 +43,7 @@ TriangleMesh::TriangleMesh(std::vector<glm::vec4> vertices, std::vector<glm::vec
     // Bind normals
     GLuint normalsPosition = 1;
     CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, vbo[normalsPosition]));
-    CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER, normals.size() * 4, normals.data(), GL_STATIC_DRAW));
+    CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER, this->normals.size() * 4, this->normals.data(), GL_STATIC_DRAW));
     CHECK_GL_ERROR(glVertexAttribPointer(normalsPosition, 4, GL_FLOAT, GL_FALSE, 0, 0));
     CHECK_GL_ERROR(glEnableVertexAttribArray(normalsPosition));
     CHECK_GL_ERROR(glBindAttribLocation(programId, normalsPosition, VERTEX_VBO_NAME.c_str()));
@@ -57,7 +57,7 @@ TriangleMesh::TriangleMesh(std::vector<glm::vec4> vertices, std::vector<glm::vec
 
     // Add the index (aka the faces)
     CHECK_GL_ERROR(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]));
-    CHECK_GL_ERROR(glBufferData(GL_ELEMENT_ARRAY_BUFFER, faces.size() * 3, faces.data(), GL_STATIC_DRAW));
+    CHECK_GL_ERROR(glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->faces.size() * 3, this->faces.data(), GL_STATIC_DRAW));
 
     // Add uniform locations
     program.addUniformLocations();

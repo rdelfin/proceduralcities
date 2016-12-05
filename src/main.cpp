@@ -16,7 +16,7 @@
 #include <TriangleMesh.h>
 
 
-int window_width = 800, window_height = 600;
+static int window_width = 800, window_height = 600;
 
 void
 ErrorCallback(int error, const char* description)
@@ -54,10 +54,35 @@ int main() {
     std::cout << "OpenGL version supported:" << version << "\n";
 
     // Create objects
-    std::vector<glm::vec4> vertices;
-    std::vector<glm::uvec3> faces;
-    std::vector<glm::vec4> normals;
-    //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
+    std::vector<glm::vec4> vertices = {glm::vec4(1.0f, 0.0f, 1.0f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f, 0.0f, 1.0f, 1.0f)};
+    std::vector<glm::uvec3> faces = {glm::uvec3(0, 1, 2)};
+    std::vector<glm::vec4> normals = {glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)};
+
+    Shader vertexShader("resources/shaders/default.vert"),
+           geometryShader("resources/shaders/default.geom"),
+           fragmentShader("resources/shaders/default.frag");
+
+    auto view_matrix_data_source = []() -> const void* {
+        static glm::mat4 proj = glm::lookAt(glm::vec3(0.0f, 0.0f, -3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        return &proj;
+    };
+
+    auto model_matrix_data_source = []() -> const void* {
+        static glm::mat4 model(1.0f);
+        return &model;
+    };
+
+    auto proj_matrix_data_source = []() -> const void* {
+        static float aspect_ = static_cast<float>(window_width) / window_height;
+        static glm::mat4 model = glm::perspective((float) (45.0f * (M_PI / 180.0f)), aspect_, 0.1f, 1000.0f);
+        return &model;
+    };
+
+    std::vector<ShaderUniform> uniforms = { ShaderUniform("projection", BINDER_MATRIX4_F, proj_matrix_data_source),
+                                            ShaderUniform("model", BINDER_MATRIX4_F, model_matrix_data_source),
+                                            ShaderUniform("view", BINDER_MATRIX4_F, view_matrix_data_source) };
+
+    TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
 
     while (!glfwWindowShouldClose(window)) {
         // Setup some basic window stuff.
@@ -73,7 +98,7 @@ int main() {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glCullFace(GL_BACK);
 
-        //mesh.draw();
+        mesh.draw();
 
         // Poll and swap.
         glfwPollEvents();

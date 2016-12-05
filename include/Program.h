@@ -65,7 +65,7 @@ public:
      * @param program String representing either the program or the path to the shader file
      * @param isFile True if program represents a file path, and false if it contains the program
      */
-    Shader(std::string program, bool isFile = true) : program(program) {
+    Shader(const std::string& program, bool isFile = true) : program(program) {
         if(isFile) {
             // If file is true, `s` is a file name. Read in from file
             std::ifstream reader(program, std::ios_base::in);

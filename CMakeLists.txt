@@ -15,3 +15,6 @@ ADD_SUBDIRECTORY(src)
 IF (EXISTS ${CMAKE_SOURCE_DIR}/sln/CMakeLists.txt)
     ADD_SUBDIRECTORY(sln)
 ENDIF()
+
+# Copy resources directory
+file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin)
