@@ -51,12 +51,42 @@ public:
     std::function<const void*()> data_source;
 };
 
-class Shader {
+struct Shader {
 public:
     /**
-     * Initializes an empty shader
+     * Create an empty shader
      */
-    Shader();
+    Shader() { }
+
+    /**
+     * Creates a non-empty shader object
+     * @param program String representing either the program or the path to the shader file
+     * @param isFile True if program represents a file path, and false if it contains the program
+     */
+    Shader(std::string program, bool isFile = true) : empty(false), program(program) {
+        if(isFile) {
+            // If file is true, `s` is a file name. Read in from file
+            std::ifstream reader(program);
+            this->program = std::string(std::istreambuf_iterator<char>(reader),
+                                        std::istreambuf_iterator<char>());
+            reader.close();
+        }
+    }
+
+    void compile(int type);
+
+    ~Shader() { }
+
+    std::string program;
+    int shader_id;
+};
+
+class Program {
+public:
+    /**
+     * Initializes an empty program
+     */
+    Program();
 
     /**
      * Main constructor for shader. Creates the shader with a program and a set of uniforms.
@@ -64,17 +94,16 @@ public:
      * @param s The string representing either a file name or the shader program itself
      * @param file If true, `s` represents a file name. Otherwise, `s` represents a string with the program
      */
-    Shader(std::vector<ShaderUniform> uniforms, int shaderType, std::string s, bool file = false);
+    Program(std::vector<ShaderUniform> uniforms, Shader vertexShader, Shader geometryShader, Shader fragmentShader);
 
-    ~Shader();
+    ~Program();
 private:
     /**
      * Compiles the shader on the GPU. Lifted mostly from project 3
      */
-    void compileShader();
+    void compile();
 
-    std::string program;
+    Shader vertexShader, geometryShader, fragmentShader;
     std::vector<ShaderUniform> uniforms;
-    int type;
-    GLint programId;
+    GLint shaderProgram;
 };

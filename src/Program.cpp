@@ -12,7 +12,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#include "Shader.h"
+#include "Program.h"
 
 /*============================================================================================================
  *============================================ SHADER UNIFORM ================================================
@@ -62,41 +62,47 @@ ShaderUniform::~ShaderUniform() { }
  *============================================================================================================
  */
 
-Shader::Shader() {
-
-}
-
-Shader::Shader(std::vector<ShaderUniform> uniforms, int shaderType, std::string s, bool file)
-    : uniforms(uniforms), type(shaderType) {
-    if(file) {
-        // If file is true, `s` is a file name. Read in from file
-        std::ifstream reader(s);
-        program = std::string(std::istreambuf_iterator<char>(reader),
-                              std::istreambuf_iterator<char>());
-        reader.close();
-    } else {
-        // Otherwise, this is program string
-        program = s;
-    }
-
-    // Afterwards, compile shader and load programId accordingly
-    compileShader();
-}
-
-
-void Shader::compileShader() {
-    GLuint program_id = 0;
-    CHECK_GL_ERROR(program_id = glCreateShader(type));
+void Shader::compile(int type) {
+    GLuint shader_id = 0;
+    CHECK_GL_ERROR(shader_id = glCreateShader(type));
 #if 1
-    std::cerr << __func__ << " shader id " << program_id << " type " << type << "\tsource:\n" << program.c_str() << std::endl;
+    std::cerr << __func__ << " shader id " << shader_id << " type " << type << "\tsource:\n" << program.c_str() << std::endl;
 #endif
     const char* programPointer = program.c_str();
-    CHECK_GL_ERROR(glShaderSource(program_id, 1, &programPointer, nullptr));
-    glCompileShader(program_id);
-    CHECK_GL_SHADER_ERROR(program_id);
-    this->programId = program_id;
+    CHECK_GL_ERROR(glShaderSource(shader_id, 1, &programPointer, nullptr));
+    glCompileShader(shader_id);
+    CHECK_GL_SHADER_ERROR(shader_id);
+    this->shader_id = shader_id;
 }
 
-Shader::~Shader() {
+
+/*============================================================================================================
+ *================================================ PROGRAM ===================================================
+ *============================================================================================================
+ */
+
+Program::Program() {
+
+}
+
+Program::Program(std::vector<ShaderUniform> uniforms, Shader vertexShader, Shader geometryShader, Shader fragmentShader)
+    : uniforms(uniforms), vertexShader(vertexShader), geometryShader(geometryShader), fragmentShader(fragmentShader) {
+
+    // Afterwards, compile shader and load programId accordingly
+    compile();
+}
+
+
+void Program::compile() {
+    vertexShader.compile(GL_VERTEX_SHADER);
+    geometryShader.compile(GL_GEOMETRY_SHADER);
+    fragmentShader.compile(GL_FRAGMENT_SHADER);
+    CHECK_GL_ERROR(shaderProgram = glCreateProgram());
+    glAttachShader(shaderProgram, vertexShader.shader_id);
+    glAttachShader(shaderProgram, fragmentShader.shader_id);
+    glAttachShader(shaderProgram, geometryShader.shader_id);
+}
+
+Program::~Program() {
 
 }
