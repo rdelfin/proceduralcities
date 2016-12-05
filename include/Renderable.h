@@ -4,14 +4,17 @@
 
 #pragma once
 
+#include <Program.h>
+
 class Renderable {
 public:
-    Renderable();
+    Renderable()  {
 
+    }
 
     virtual void draw() = 0;
 
-    virtual ~Renderable();
-protected:
-    Shader vertexShader, geometryShader, fragmentShader;
+    virtual ~Renderable() {
+
+    }
 };

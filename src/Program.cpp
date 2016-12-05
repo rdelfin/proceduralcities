@@ -92,6 +92,29 @@ Program::Program(std::vector<ShaderUniform> uniforms, Shader vertexShader, Shade
     compile();
 }
 
+void Program::addUniformLocations() {
+    uniformIds.resize(uniforms.size());
+    for(int i = 0; i < uniforms.size(); i++) {
+        CHECK_GL_ERROR(uniformIds[i] = glGetUniformLocation(shaderProgram, uniforms[i].name.c_str()));
+    }
+}
+
+void Program::link() {
+    glLinkProgram(shaderProgram);
+    CHECK_GL_PROGRAM_ERROR(shaderProgram);
+}
+
+void Program::use() {
+    CHECK_GL_ERROR(glUseProgram(shaderProgram));
+}
+
+void Program::bindUniforms() {
+    for (size_t i = 0; i < uniforms.size(); i++) {
+        const auto& uni = uniforms[i];
+        CHECK_GL_ERROR(uni.binder(uniformIds[i], uni.data_source()));
+    }
+}
+
 
 void Program::compile() {
     vertexShader.compile(GL_VERTEX_SHADER);

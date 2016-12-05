@@ -96,6 +96,15 @@ public:
      */
     Program(std::vector<ShaderUniform> uniforms, Shader vertexShader, Shader geometryShader, Shader fragmentShader);
 
+    GLint getProgramId() { return shaderProgram; }
+
+    void addUniformLocations();
+
+    void bindUniforms();
+
+    void link();
+    void use();
+
     ~Program();
 private:
     /**
@@ -105,5 +114,6 @@ private:
 
     Shader vertexShader, geometryShader, fragmentShader;
     std::vector<ShaderUniform> uniforms;
+    std::vector<GLint> uniformIds;
     GLint shaderProgram;
 };
