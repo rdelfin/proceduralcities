@@ -94,7 +94,7 @@ Program::Program(std::vector<ShaderUniform> uniforms, Shader vertexShader, Shade
 
 void Program::addUniformLocations() {
     uniformIds.resize(uniforms.size());
-    for(int i = 0; i < uniforms.size(); i++) {
+    for(size_t i = 0; i < uniforms.size(); i++) {
         CHECK_GL_ERROR(uniformIds[i] = glGetUniformLocation(shaderProgram, uniforms[i].name.c_str()));
     }
 }

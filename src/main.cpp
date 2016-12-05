@@ -14,6 +14,9 @@
 #include "debuggl.h"
 #include <Renderable.h>
 #include <TriangleMesh.h>
+#include <sstream>
+
+void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, std::vector<glm::vec4>& normals);
 
 
 static int window_width = 800, window_height = 600;
@@ -54,9 +57,11 @@ int main() {
     std::cout << "OpenGL version supported:" << version << "\n";
 
     // Create objects
-    std::vector<glm::vec4> vertices = {glm::vec4(1.0f, 0.0f, 1.0f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f, 0.0f, 1.0f, 1.0f)};
-    std::vector<glm::uvec3> faces = {glm::uvec3(0, 1, 2)};
-    std::vector<glm::vec4> normals = {glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)};
+    std::vector<glm::vec4> vertices;
+    std::vector<glm::uvec3> faces;
+    std::vector<glm::vec4> normals;
+
+    load_teapot(vertices, faces, normals);
 
     Shader vertexShader("resources/shaders/default.vert"),
            geometryShader("resources/shaders/default.geom"),
@@ -111,4 +116,39 @@ int main() {
     exit(EXIT_SUCCESS);
 
     return 0;
+}
+
+
+void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, std::vector<glm::vec4>& normals) {
+    std::ifstream fileStream("resources/model/teapot_0.obj");
+
+    std::string line;
+
+    while(std::getline(fileStream, line)) {
+        if(line[0] == 'v') {
+            std::stringstream lineStream(line);
+
+            std::string header;
+            double x, y, z;
+
+            if(!(lineStream >> header >> x >> y >> z))
+                break;
+
+            vertices.push_back(glm::vec4(x, y, z, 1.0f));
+            normals.push_back(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+        }
+
+        else if(line[0] == 'f') {
+            std::stringstream lineStream(line);
+
+            std::string header;
+            int x, y, z;
+
+            if(!(lineStream >> header >> x >> y >> z))
+                break;
+
+            faces.push_back(glm::uvec3(x, y, z));
+        }
+    }
+
 }

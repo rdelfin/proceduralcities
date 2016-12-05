@@ -11,6 +11,7 @@
 #include "Program.h"
 
 const std::string TriangleMesh::VERTEX_VBO_NAME = "vertex_position";
+const std::string TriangleMesh::NORMAL_VBO_NAME = "normal";
 const std::string TriangleMesh::FRAGMENT_COLOR_NAME = "vertex_color";
 
 
@@ -46,7 +47,7 @@ TriangleMesh::TriangleMesh(const std::vector<glm::vec4>& vertices, const std::ve
     CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER, this->normals.size() * 4, this->normals.data(), GL_STATIC_DRAW));
     CHECK_GL_ERROR(glVertexAttribPointer(normalsPosition, 4, GL_FLOAT, GL_FALSE, 0, 0));
     CHECK_GL_ERROR(glEnableVertexAttribArray(normalsPosition));
-    CHECK_GL_ERROR(glBindAttribLocation(programId, normalsPosition, VERTEX_VBO_NAME.c_str()));
+    CHECK_GL_ERROR(glBindAttribLocation(programId, normalsPosition, NORMAL_VBO_NAME.c_str()));
 
 
     // Add a vertex_color output

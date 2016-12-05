@@ -30,6 +30,7 @@ private:
 
     static const std::string VERTEX_VBO_NAME;
     static const std::string FRAGMENT_COLOR_NAME;
+    static const std::string NORMAL_VBO_NAME;
 };
 
 
