@@ -15,6 +15,7 @@
 #include <Renderable.h>
 #include <TriangleMesh.h>
 #include <sstream>
+#include <camera.h>
 
 void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, std::vector<glm::vec4>& normals);
 
@@ -56,6 +57,8 @@ int main() {
     std::cout << "Renderer: " << renderer << "\n";
     std::cout << "OpenGL version supported:" << version << "\n";
 
+    Camera camera;
+
     // Create objects
     std::vector<glm::vec4> vertices;
     std::vector<glm::uvec3> faces;
@@ -67,9 +70,8 @@ int main() {
            geometryShader("resources/shaders/default.geom"),
            fragmentShader("resources/shaders/default.frag");
 
-    auto view_matrix_data_source = []() -> const void* {
-        static glm::mat4 proj = glm::lookAt(glm::vec3(0.0f, 0.0f, -3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        return &proj;
+    auto view_matrix_data_source = [&camera]() -> const void* {
+        return &camera.getViewMatrix();
     };
 
     auto model_matrix_data_source = []() -> const void* {
