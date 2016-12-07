@@ -73,20 +73,10 @@ void Camera::zoom(float dir) {
 
 const glm::mat4& Camera::getViewMatrix()
 {
-    glm::vec3 newEye(eyeTranslateMat * rotateMat * glm::vec4(eye_, 1));
-    glm::vec3 newCenter(centerTranslateMat * rotateMat * glm::vec4(center_, 1));
+    glm::vec3 eye = glm::vec3(eyeTranslateMat * rotateMat * glm::vec4(eye_, 1));
+    glm::vec3 center = glm::vec3(centerTranslateMat * rotateMat * glm::vec4(center_, 1));
 
-    glm::vec3 Z = glm::normalize(newEye - newCenter);
-    glm::vec3 X = glm::cross(up_, Z);
-    glm::vec3 Y = glm::normalize(glm::cross(Z, X));
-    X = glm::normalize(X);
-
-    // Yes the first three could have been in a loop but SHUSH!
-    viewMatrix = glm::mat4(1.0f);
-    viewMatrix[0] = glm::vec4(X.x, Y.x, Z.x, 0);
-    viewMatrix[1] = glm::vec4(X.y, Y.y, Z.y, 0);
-    viewMatrix[2] = glm::vec4(X.z, Y.z, Z.z, 0);
-    viewMatrix[3] = glm::vec4(glm::dot(-X, newEye), glm::dot(-Y, newEye), glm::dot(-Z, newEye), 1);
+    viewMatrix = glm::lookAt(eye, center, up_);
 
     return viewMatrix;
 }
