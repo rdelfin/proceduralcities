@@ -96,7 +96,7 @@ int main() {
                                             ShaderUniform("model", BINDER_MATRIX4_F, model_matrix_data_source),
                                             ShaderUniform("view", BINDER_MATRIX4_F, view_matrix_data_source) };
 
-    camera.zoom(1000.0f);
+    camera.zoom(100.0f);
 
     TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
 
@@ -113,8 +113,6 @@ int main() {
         glDepthFunc(GL_LESS);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glCullFace(GL_BACK);
-
-
 
         mesh.draw();
 
@@ -217,7 +215,7 @@ MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 
 
 void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, std::vector<glm::vec4>& normals) {
-    std::ifstream fileStream("resources/model/teapot.obj");
+    std::ifstream fileStream("resources/model/shuttle.obj");
 
     std::string line;
 
@@ -258,5 +256,4 @@ void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& face
             faces.push_back(glm::uvec3(x, y, z));
         }
     }
-
 }

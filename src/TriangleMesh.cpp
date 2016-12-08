@@ -22,12 +22,14 @@ TriangleMesh::TriangleMesh() {
 TriangleMesh::TriangleMesh(const std::vector<glm::vec4>& vertices, const std::vector<glm::vec4>& normals, const std::vector<glm::uvec3>& faces,
                            const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader,
                            const std::vector<ShaderUniform>& uniforms)
-    : vertices(vertices), normals(normals), faces(faces), program(uniforms, vertexShader, geometryShader, fragmentShader) {
-    GLint programId = program.getProgramId();
+    : vertices(vertices), normals(normals), faces(faces) {
 
     // Generate VAO
     CHECK_GL_ERROR(glGenVertexArrays(1, &vao));
     CHECK_GL_ERROR(glBindVertexArray(vao));
+
+    program = Program(uniforms, vertexShader, geometryShader, fragmentShader);
+    GLint programId = program.getProgramId();
 
     // Generate VBO
     vbo.resize(3);
@@ -37,17 +39,17 @@ TriangleMesh::TriangleMesh(const std::vector<glm::vec4>& vertices, const std::ve
     GLuint verticesPosition = 0;
     CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, vbo[verticesPosition]));
     CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * 4, this->vertices.data(), GL_STATIC_DRAW));
-    CHECK_GL_ERROR(glVertexAttribPointer(verticesPosition, 4, GL_FLOAT, GL_FALSE, 0, 0));
-    CHECK_GL_ERROR(glEnableVertexAttribArray(verticesPosition));
-    CHECK_GL_ERROR(glBindAttribLocation(programId, verticesPosition, VERTEX_VBO_NAME.c_str()));
+    CHECK_GL_ERROR(glVertexAttribPointer(vbo[verticesPosition], 4, GL_FLOAT, GL_FALSE, 0, 0));
+    CHECK_GL_ERROR(glEnableVertexAttribArray(vbo[verticesPosition]));
+    CHECK_GL_ERROR(glBindAttribLocation(programId, vbo[verticesPosition], VERTEX_VBO_NAME.c_str()));
 
     // Bind normals
     GLuint normalsPosition = 1;
     CHECK_GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, vbo[normalsPosition]));
     CHECK_GL_ERROR(glBufferData(GL_ARRAY_BUFFER, this->normals.size() * 4, this->normals.data(), GL_STATIC_DRAW));
-    CHECK_GL_ERROR(glVertexAttribPointer(normalsPosition, 4, GL_FLOAT, GL_FALSE, 0, 0));
-    CHECK_GL_ERROR(glEnableVertexAttribArray(normalsPosition));
-    CHECK_GL_ERROR(glBindAttribLocation(programId, normalsPosition, NORMAL_VBO_NAME.c_str()));
+    CHECK_GL_ERROR(glVertexAttribPointer(vbo[normalsPosition], 4, GL_FLOAT, GL_FALSE, 0, 0));
+    CHECK_GL_ERROR(glEnableVertexAttribArray(vbo[normalsPosition]));
+    CHECK_GL_ERROR(glBindAttribLocation(programId, vbo[normalsPosition], NORMAL_VBO_NAME.c_str()));
 
 
     // Add a vertex_color output

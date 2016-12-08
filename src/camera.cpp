@@ -9,10 +9,10 @@
 #include <glm/gtx/rotate_vector.hpp>
 
 namespace {
-    float pan_speed = 0.1f;
+    float pan_speed = 1.0f;
     float roll_speed = 0.1f;
     float rotation_speed = 0.05f;
-    float zoom_speed = 0.1f;
+    float zoom_speed = 1.0f;
 };
 
 Camera::Camera() { }

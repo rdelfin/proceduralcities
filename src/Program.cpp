@@ -65,7 +65,7 @@ ShaderUniform::~ShaderUniform() { }
 void Shader::compile(int type) {
     GLuint shader_id = 0;
     CHECK_GL_ERROR(shader_id = glCreateShader(type));
-#if 1
+#if 0
     std::cerr << __func__ << " shader id " << shader_id << " type " << type << "\tsource:\n" << program.c_str() << std::endl;
 #endif
     const char* programPointer = program.c_str();
