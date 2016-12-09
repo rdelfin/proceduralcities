@@ -215,7 +215,7 @@ MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 
 
 void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, std::vector<glm::vec4>& normals) {
-    std::ifstream fileStream("resources/model/shuttle.obj");
+    std::ifstream fileStream("resources/model/teapot.obj");
 
     std::string line;
 
