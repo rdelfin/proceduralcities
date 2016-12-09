@@ -253,7 +253,7 @@ void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& face
             if(!(lineStream >> header >> x >> y >> z))
                 break;
 
-            faces.push_back(glm::uvec3(x, y, z));
+            faces.push_back(glm::uvec3(x - 1, y - 1, z - 1));
         }
     }
 }
