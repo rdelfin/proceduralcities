@@ -1,12 +1,17 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <iostream>
+#include <algorithm>
+#include <glm/gtx/string_cast.hpp>
 
 #define PI 3.14159265
 
 #include "StreetMap.h"
 
-StreetMap::StreetMap(enum roadPattern pattern, vector<glm::vec2> populationCenters) {
+using namespace std;
+
+StreetMap::StreetMap(enum roadPattern pattern, vector<glm::vec2> populationCenters, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints) {
     srand (time(NULL));
     
     int index = 0;
@@ -32,10 +37,19 @@ StreetMap::StreetMap(enum roadPattern pattern, vector<glm::vec2> populationCente
             float deltaZ3 = sin(angle3 * PI / 180.0f);
             float deltaX4 = cos(angle4 * PI / 180.0f);
             float deltaZ4 = sin(angle4 * PI / 180.0f);
+            
             glm::vec3 point1;
             glm::vec3 point2;
             glm::vec3 point3;
             glm::vec3 point4;
+
+            float distance;
+            float x;
+            float z;
+            glm::vec4 topleft;
+            glm::vec4 topright;
+            glm::vec4 bottomleft;
+            glm::vec4 bottomright;
 
             glm::vec3 centerNormal = glm::vec3(deltaX1, 0.0f, deltaZ1);
             glm::vec3 planeNormal = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -47,37 +61,61 @@ StreetMap::StreetMap(enum roadPattern pattern, vector<glm::vec2> populationCente
                 point3 = glm::vec3(populationCenters[i][0] + deltaX3 * centerRadius, 0.0f, populationCenters[i][1] + deltaZ3 * centerRadius);
                 point4 = glm::vec3(populationCenters[i][0] + deltaX4 * centerRadius, 0.0f, populationCenters[i][1] + deltaZ4 * centerRadius);
 
-                vertices.push_back(glm::vec4(point1, 1.0f) + glm::vec4(2.0f * centerNormal, 0.0f) + glm::vec4(-50.0f * centerTangent, 0.0f));
-                vertices.push_back(glm::vec4(point1, 1.0f) + glm::vec4(-50.0f * centerTangent, 0.0f));
-                vertices.push_back(glm::vec4(point1, 1.0f) + glm::vec4(50.0f * centerTangent, 0.0f));
+                calculateExtremes(point1, centerTangent, centerNormal, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright);
+                // cout << glm::to_string(bottomleft) << endl;
+                // cout << glm::to_string(bottomright) << endl;
+                // cout << glm::to_string(topleft) << endl;
+                // cout << glm::to_string(topright) << endl << endl;
 
-                vertices.push_back(glm::vec4(point1, 1.0f) + glm::vec4(2.0f * centerNormal, 0.0f) + glm::vec4(-50.0f * centerTangent, 0.0f));
-                vertices.push_back(glm::vec4(point1, 1.0f) + glm::vec4(50.0f * centerTangent, 0.0f));
-                vertices.push_back(glm::vec4(point1, 1.0f) + glm::vec4(2.0f * centerNormal, 0.0f) + glm::vec4(50.0f * centerTangent, 0.0f));
+                vertices.push_back(bottomleft);
+                vertices.push_back(bottomright);
+                vertices.push_back(topright);
 
-                vertices.push_back(glm::vec4(point2, 1.0f) + glm::vec4(-2.0f * centerNormal, 0.0f) + glm::vec4(-50.0f * centerTangent, 0.0f));
-                vertices.push_back(glm::vec4(point2, 1.0f) + glm::vec4(-50.0f * centerTangent, 0.0f));
-                vertices.push_back(glm::vec4(point2, 1.0f) + glm::vec4(50.0f * centerTangent, 0.0f));
+                vertices.push_back(bottomleft);
+                vertices.push_back(topright);
+                vertices.push_back(topleft);
 
-                vertices.push_back(glm::vec4(point2, 1.0f) + glm::vec4(-2.0f * centerNormal, 0.0f) + glm::vec4(-50.0f * centerTangent, 0.0f));
-                vertices.push_back(glm::vec4(point2, 1.0f) + glm::vec4(50.0f * centerTangent, 0.0f));
-                vertices.push_back(glm::vec4(point2, 1.0f) + glm::vec4(-2.0f * centerNormal, 0.0f) + glm::vec4(50.0f * centerTangent, 0.0f));
+                calculateExtremes(point2, centerTangent, centerNormal, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright);
+                // cout << glm::to_string(bottomleft) << endl;
+                // cout << glm::to_string(bottomright) << endl;
+                // cout << glm::to_string(topleft) << endl;
+                // cout << glm::to_string(topright) << endl << endl;
 
-                vertices.push_back(glm::vec4(point3, 1.0f) + glm::vec4(2.0f * centerTangent, 0.0f) + glm::vec4(-50.0f * centerNormal, 0.0f));
-                vertices.push_back(glm::vec4(point3, 1.0f) + glm::vec4(-50.0f * centerNormal, 0.0f));
-                vertices.push_back(glm::vec4(point3, 1.0f) + glm::vec4(50.0f * centerNormal, 0.0f));
+                vertices.push_back(bottomleft);
+                vertices.push_back(bottomright);
+                vertices.push_back(topright);
 
-                vertices.push_back(glm::vec4(point3, 1.0f) + glm::vec4(2.0f * centerTangent, 0.0f) + glm::vec4(-50.0f * centerNormal, 0.0f));
-                vertices.push_back(glm::vec4(point3, 1.0f) + glm::vec4(50.0f * centerNormal, 0.0f));
-                vertices.push_back(glm::vec4(point3, 1.0f) + glm::vec4(2.0f * centerTangent, 0.0f) + glm::vec4(50.0f * centerNormal, 0.0f));
+                vertices.push_back(bottomleft);
+                vertices.push_back(topright);
+                vertices.push_back(topleft);
 
-                vertices.push_back(glm::vec4(point4, 1.0f) + glm::vec4(-2.0f * centerTangent, 0.0f) + glm::vec4(-50.0f * centerNormal, 0.0f));
-                vertices.push_back(glm::vec4(point4, 1.0f) + glm::vec4(-50.0f * centerNormal, 0.0f));
-                vertices.push_back(glm::vec4(point4, 1.0f) + glm::vec4(50.0f * centerNormal, 0.0f));
+                calculateExtremes(point3, centerNormal, centerTangent, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright);
+                // cout << glm::to_string(bottomleft) << endl;
+                // cout << glm::to_string(bottomright) << endl;
+                // cout << glm::to_string(topleft) << endl;
+                // cout << glm::to_string(topright) << endl << endl;
 
-                vertices.push_back(glm::vec4(point4, 1.0f) + glm::vec4(-2.0f * centerTangent, 0.0f) + glm::vec4(-50.0f * centerNormal, 0.0f));
-                vertices.push_back(glm::vec4(point4, 1.0f) + glm::vec4(50.0f * centerNormal, 0.0f));
-                vertices.push_back(glm::vec4(point4, 1.0f) + glm::vec4(-2.0f * centerTangent, 0.0f) + glm::vec4(50.0f * centerNormal, 0.0f));
+                vertices.push_back(bottomleft);
+                vertices.push_back(bottomright);
+                vertices.push_back(topright);
+
+                vertices.push_back(bottomleft);
+                vertices.push_back(topright);
+                vertices.push_back(topleft);
+
+                calculateExtremes(point4, centerNormal, centerTangent, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright);
+                // cout << glm::to_string(bottomleft) << endl;
+                // cout << glm::to_string(bottomright) << endl;
+                // cout << glm::to_string(topleft) << endl;
+                // cout << glm::to_string(topright) << endl << endl;
+
+                vertices.push_back(bottomleft);
+                vertices.push_back(bottomright);
+                vertices.push_back(topright);
+
+                vertices.push_back(bottomleft);
+                vertices.push_back(topright);
+                vertices.push_back(topleft);
 
                 for (j = 0; j < 24; j++) {
                     normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
@@ -94,4 +132,53 @@ StreetMap::StreetMap(enum roadPattern pattern, vector<glm::vec2> populationCente
             break;
         }
     }
+}
+
+void StreetMap::calculateExtremes(glm::vec3 point, glm::vec3 centerTangent, glm::vec3 centerNormal, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints,
+                                  glm::vec4 &bottomleft, glm::vec4 &bottomright, glm::vec4 &topleft, glm::vec4 &topright) {
+    float distance;
+    float x;
+    float z;
+
+    distance = 0.0f;
+    bottomright = glm::vec4(point, 1.0f) + glm::vec4(-distance * centerTangent, 0.0f);
+    while (true) {
+        x = ceil(bottomright[0]);
+        z = floor(bottomright[2]);
+        if (waterPoints.count(x) != 0 && waterPoints[x].count(z) != 0) {
+            break;
+        }
+        else if (parksPoints.count(x) != 0 && parksPoints[x].count(z) != 0) {
+            break;
+        }
+        else if (x <= -100.0f || x >= 100.0f || z <= -100.0f || z >= 100.0f) {
+            break;
+        }
+
+        distance += 0.5f;
+        bottomright = glm::vec4(point, 1.0f) + glm::vec4(-distance * centerTangent, 0.0f);
+    }
+
+    bottomleft = bottomright + glm::vec4(2.0f * centerNormal, 0.0f);
+
+    distance = 0.0f;
+    topright = glm::vec4(point, 1.0f) + glm::vec4(distance * centerTangent, 0.0f);
+    while (true) {
+        x = ceil(topright[0]);
+        z = ceil(topright[2]);
+        if (waterPoints.count(x) != 0 && waterPoints[x].count(z) != 0) {
+            break;
+        }
+        else if (parksPoints.count(x) != 0 && parksPoints[x].count(z) != 0) {
+            break;
+        }
+        else if (x <= -100.0f || x >= 100.0f || z <= -100.0f || z >= 100.0f) {
+            break;
+        }
+
+        distance += 0.5f;
+        topright = glm::vec4(point, 1.0f) + glm::vec4(distance * centerTangent, 0.0f);
+    }
+
+    topleft = topright + glm::vec4(2.0f * centerNormal, 0.0f);
 }

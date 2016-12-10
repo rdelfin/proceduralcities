@@ -25,8 +25,7 @@ class Area {
         vector<glm::uvec3> parksFaces;
 
         vector<glm::vec2> populationCenters;
-
-    private:
+        
         map<float, set<float>> waterPoints;
         map<float, set<float>> parksPoints;
 };

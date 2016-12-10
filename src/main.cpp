@@ -116,10 +116,11 @@ int main() {
 
     camera.zoom(250.0f);
     camera.pitch((180.0f / M_PI) * -420 / window_width);
+    camera.strave(glm::vec3(0, 1, 0));
 
     Floor floor;
     Area area;
-    StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters);
+    StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
 
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
     TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);
