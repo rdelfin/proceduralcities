@@ -15,8 +15,10 @@
 #include <GLFW/glfw3.h>
 #include "debuggl.h"
 #include <Area.h>
+#include <AreaLine.h>
 #include <Floor.h>
 #include <Renderable.h>
+#include <LineMesh.h>
 #include <TriangleMesh.h>
 #include <sstream>
 #include <camera.h>
@@ -84,6 +86,7 @@ int main() {
 
     Shader vertexShader("resources/shaders/default.vert"),
            geometryShader("resources/shaders/default.geom"),
+           linesGeometryShader("resources/shaders/lines.geom"),
            fragmentShader("resources/shaders/default.frag"),
            floorFragmentShader("resources/shaders/floor.frag"),
            waterFragmentShader("resources/shaders/water.frag"),
@@ -120,6 +123,10 @@ int main() {
 
     Floor floor;
     Area area;
+    AreaLine areaLine;
+    int i, j;
+    vector<LineMesh> waterMeshes;
+    vector<LineMesh> parksMeshes;
     StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
 
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
@@ -143,10 +150,9 @@ int main() {
         glCullFace(GL_BACK);
 
         floorMesh.draw();
+        streetMesh.draw();
         waterMesh.draw();
         parksMesh.draw();
-        streetMesh.draw();
-        //mesh.draw();
 
         // Poll and swap.
         glfwPollEvents();

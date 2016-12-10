@@ -25,6 +25,9 @@ class StreetMap {
         vector<glm::vec4> vertices;
         vector<glm::vec4> normals;
         vector<glm::uvec3> faces;
+
+        glm::vec3 centerNormal;
+        glm::vec3 centerTangent;
     
     private:
         void calculateExtremes(glm::vec3 point, glm::vec3 centerTangent, glm::vec3 centerNormal, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints,

@@ -51,15 +51,15 @@ StreetMap::StreetMap(enum roadPattern pattern, vector<glm::vec2> populationCente
             glm::vec4 bottomleft;
             glm::vec4 bottomright;
 
-            glm::vec3 centerNormal = glm::vec3(deltaX1, 0.0f, deltaZ1);
+            centerNormal = glm::vec3(deltaX1, 0.0f, deltaZ1);
             glm::vec3 planeNormal = glm::vec3(0.0f, 1.0f, 0.0f);
-            glm::vec3 centerTangent = glm::cross(centerNormal, planeNormal);
+            centerTangent = glm::cross(centerNormal, planeNormal);
 
             for (i = 0; i < size; i++) {
-                point1 = glm::vec3(populationCenters[i][0] + deltaX1 * centerRadius, 0.0f, populationCenters[i][1] + deltaZ1 * centerRadius);
-                point2 = glm::vec3(populationCenters[i][0] + deltaX2 * centerRadius, 0.0f, populationCenters[i][1] + deltaZ2 * centerRadius);
-                point3 = glm::vec3(populationCenters[i][0] + deltaX3 * centerRadius, 0.0f, populationCenters[i][1] + deltaZ3 * centerRadius);
-                point4 = glm::vec3(populationCenters[i][0] + deltaX4 * centerRadius, 0.0f, populationCenters[i][1] + deltaZ4 * centerRadius);
+                point1 = glm::vec3(populationCenters[i][0] + deltaX1 * centerRadius, -1.95f, populationCenters[i][1] + deltaZ1 * centerRadius);
+                point2 = glm::vec3(populationCenters[i][0] + deltaX2 * centerRadius, -1.95f, populationCenters[i][1] + deltaZ2 * centerRadius);
+                point3 = glm::vec3(populationCenters[i][0] + deltaX3 * centerRadius, -1.95f, populationCenters[i][1] + deltaZ3 * centerRadius);
+                point4 = glm::vec3(populationCenters[i][0] + deltaX4 * centerRadius, -1.95f, populationCenters[i][1] + deltaZ4 * centerRadius);
 
                 calculateExtremes(point1, centerTangent, centerNormal, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright);
                 // cout << glm::to_string(bottomleft) << endl;
@@ -139,12 +139,14 @@ void StreetMap::calculateExtremes(glm::vec3 point, glm::vec3 centerTangent, glm:
     float distance;
     float x;
     float z;
+    glm::vec4 bottomright2;
+    glm::vec4 topright2;
 
     distance = 0.0f;
-    bottomright = glm::vec4(point, 1.0f) + glm::vec4(-distance * centerTangent, 0.0f);
+    bottomright = bottomright2 = glm::vec4(point, 1.0f) + glm::vec4(-distance * centerTangent, 0.0f);
     while (true) {
-        x = ceil(bottomright[0]);
-        z = floor(bottomright[2]);
+        x = round(bottomright[0]);
+        z = round(bottomright[2]);
         if (waterPoints.count(x) != 0 && waterPoints[x].count(z) != 0) {
             break;
         }
@@ -155,17 +157,18 @@ void StreetMap::calculateExtremes(glm::vec3 point, glm::vec3 centerTangent, glm:
             break;
         }
 
-        distance += 0.5f;
-        bottomright = glm::vec4(point, 1.0f) + glm::vec4(-distance * centerTangent, 0.0f);
+        distance += 0.25f;
+        bottomright = bottomright2;
+        bottomright2 = glm::vec4(point, 1.0f) + glm::vec4(-distance * centerTangent, 0.0f);
     }
 
-    bottomleft = bottomright + glm::vec4(2.0f * centerNormal, 0.0f);
+    bottomleft = bottomright + glm::vec4(1.0f * centerNormal, 0.0f);
 
     distance = 0.0f;
-    topright = glm::vec4(point, 1.0f) + glm::vec4(distance * centerTangent, 0.0f);
+    topright = topright2 = glm::vec4(point, 1.0f) + glm::vec4(distance * centerTangent, 0.0f);
     while (true) {
-        x = ceil(topright[0]);
-        z = ceil(topright[2]);
+        x = round(topright[0]);
+        z = round(topright[2]);
         if (waterPoints.count(x) != 0 && waterPoints[x].count(z) != 0) {
             break;
         }
@@ -176,9 +179,10 @@ void StreetMap::calculateExtremes(glm::vec3 point, glm::vec3 centerTangent, glm:
             break;
         }
 
-        distance += 0.5f;
-        topright = glm::vec4(point, 1.0f) + glm::vec4(distance * centerTangent, 0.0f);
+        distance += 0.25f;
+        topright = topright2;
+        topright2 = glm::vec4(point, 1.0f) + glm::vec4(distance * centerTangent, 0.0f);
     }
 
-    topleft = topright + glm::vec4(2.0f * centerNormal, 0.0f);
+    topleft = topright + glm::vec4(1.0f * centerNormal, 0.0f);
 }
