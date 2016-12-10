@@ -6,18 +6,25 @@
 #define PROCEDURALCITIES_STREETSEGMENT_H
 
 #include <glm/glm.hpp>
+#include <vector>
+
+class Intersection;
 
 class StreetSegment {
 public:
     StreetSegment();
-    StreetSegment(const std::vector<glm::vec2>& waypoints, bool highway = false);
+    StreetSegment(const std::vector<glm::vec3>& waypoints, Intersection* start, Intersection* end, bool highway = false);
 
-    glm::vec2 get(float val);
+    glm::vec3 get(float val);
+
+    void addLines(std::vector<glm::vec4>& vertices, std::vector<glm::uvec2>& lines);
 
     ~StreetSegment();
 private:
-    std::vector<glm::vec2> waypoints;
-    bool highway = false;
+    std::vector<glm::vec3> waypoints;
+    bool highway;
+
+    Intersection *start, *end;
 };
 
 
