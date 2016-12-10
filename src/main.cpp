@@ -12,10 +12,14 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "debuggl.h"
+#include <Area.h>
+#include <Floor.h>
 #include <Renderable.h>
 #include <TriangleMesh.h>
 #include <sstream>
 #include <camera.h>
+
+using namespace std;
 
 void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, std::vector<glm::vec4>& normals);
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -75,7 +79,10 @@ int main() {
 
     Shader vertexShader("resources/shaders/default.vert"),
            geometryShader("resources/shaders/default.geom"),
-           fragmentShader("resources/shaders/default.frag");
+           fragmentShader("resources/shaders/default.frag"),
+           floorFragmentShader("resources/shaders/floor.frag"),
+           waterFragmentShader("resources/shaders/water.frag"),
+           parksFragmentShader("resources/shaders/parks.frag");
 
     auto view_matrix_data_source = []() -> const void* {
         return &camera.getViewMatrix();
@@ -96,9 +103,16 @@ int main() {
                                             ShaderUniform("model", BINDER_MATRIX4_F, model_matrix_data_source),
                                             ShaderUniform("view", BINDER_MATRIX4_F, view_matrix_data_source) };
 
-    camera.zoom(100.0f);
+    camera.zoom(250.0f);
+    camera.pitch((180.0f / M_PI) * -420 / window_width);
 
-    TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
+    Floor floor;
+    Area area;
+
+    TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
+    TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);
+    TriangleMesh parksMesh(area.parksVertices, area.parksNormals, area.parksFaces, vertexShader, geometryShader, parksFragmentShader, uniforms);
+    //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
 
     while (!glfwWindowShouldClose(window)) {
         // Setup some basic window stuff.
@@ -114,7 +128,10 @@ int main() {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glCullFace(GL_BACK);
 
-        mesh.draw();
+        floorMesh.draw();
+        waterMesh.draw();
+        parksMesh.draw();
+        //mesh.draw();
 
         // Poll and swap.
         glfwPollEvents();
@@ -182,8 +199,6 @@ int g_current_button;
 bool g_prev_mouse_pressed;
 bool g_mouse_pressed;
 glm::vec2 prevMouse(0.0f, 0.0f);
-
-void generate_floor(std::vector<glm::vec4> &vertices, std::vector<glm::vec4> &normals, std::vector<glm::uvec3> &faces);
 
 void
 MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y)
