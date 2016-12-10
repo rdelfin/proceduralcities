@@ -85,7 +85,9 @@ const RoadAttribute* BranchModule::getRoadAttribute() {
     return nullptr;
 }
 
-virtual ~BranchModule();
+BranchModule::~BranchModule() {
+
+}
 
 InquiryModule::InquiryModule(RoadAttribute* roadAttribute, StateAttribute* stateAttribute) {
     this->addAttribute(roadAttribute);

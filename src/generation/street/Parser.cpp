@@ -10,15 +10,13 @@
 Parser::Parser(const GlobalGoals& globalGoals, const LocalConstraints& localConstraints)
     : globalGoals(globalGoals), localConstraints(localConstraints) {
     // Initialize using axiom (omega)
-    DelayAttribute* delayAttribute = new DelayAttribute;
+    DelayAttribute* delayAttribute = new DelayAttribute(0);
     RoadAttribute* roadAttribute = new RoadAttribute;
     RuleAttribute* ruleAttribute = new RuleAttribute;
-    StateAttribute* stateAttribute = new StateAttribute;
+    StateAttribute* stateAttribute = new StateAttribute(STATE_UNASSIGNED);
 
-    delayAttribute->delay = 0;
     roadAttribute->angle = 0; // TODO: What to put here?
     roadAttribute->length = 0; // TODO: Same tbh
-    stateAttribute->state = STATE_SUCCEEDED;
 
     modules.push_back(new RoadModule(delayAttribute, ruleAttribute));
     modules.push_back(new InquiryModule(roadAttribute, stateAttribute));
