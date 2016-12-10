@@ -92,9 +92,14 @@ int main() {
         return &model;
     };
 
+    auto camera_data_source = []() -> const void* {
+        return &camera.getCameraPosition();
+    };
+
     std::vector<ShaderUniform> uniforms = { ShaderUniform("projection", BINDER_MATRIX4_F, proj_matrix_data_source),
                                             ShaderUniform("model", BINDER_MATRIX4_F, model_matrix_data_source),
-                                            ShaderUniform("view", BINDER_MATRIX4_F, view_matrix_data_source) };
+                                            ShaderUniform("view", BINDER_MATRIX4_F, view_matrix_data_source),
+                                            ShaderUniform("camera_position", BINDER_VECTOR3_F, camera_data_source) };
 
     camera.zoom(100.0f);
 
@@ -253,7 +258,7 @@ void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& face
             if(!(lineStream >> header >> x >> y >> z))
                 break;
 
-            faces.push_back(glm::uvec3(x - 1, y - 1, z - 1));
+            faces.push_back(glm::uvec3(z - 1, y - 1, x - 1));
         }
     }
 }

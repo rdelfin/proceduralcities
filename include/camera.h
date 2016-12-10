@@ -21,6 +21,7 @@ public:
     void zoom(float dir);
 
     const glm::mat4& getViewMatrix();
+    const glm::vec3& getCameraPosition();
 
     ~Camera();
 private:
@@ -34,6 +35,8 @@ private:
     glm::mat4 eyeTranslateMat = glm::mat4(1.0f);
     glm::mat4 centerTranslateMat = glm::mat4(1.0f);
     glm::mat4 rotateMat = glm::mat4(1.0f);
+
+    glm::vec3 finalEye = glm::vec3(0.0f, 0.0f, camera_distance_);
 
     glm::mat4 viewMatrix = glm::mat4();
 };

@@ -81,4 +81,10 @@ const glm::mat4& Camera::getViewMatrix()
     return viewMatrix;
 }
 
+
+const glm::vec3& Camera::getCameraPosition() {
+    finalEye = glm::vec3(eyeTranslateMat * rotateMat * glm::vec4(eye_, 1));
+    return finalEye;
+}
+
 Camera::~Camera() { }
