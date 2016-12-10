@@ -57,6 +57,15 @@ public:
     virtual ~BranchModule();
 };
 
+class DrawnRoadModule : public  Module {
+public:
+    DrawnRoadModule(RoadAttribute* roadAttribute);
+
+    const RoadAttribute* getRoadAttribute();
+
+    virtual ~DrawnRoadModule() { }
+};
+
 class TerminationModule : public Module {
 public:
     TerminationModule() { }
@@ -64,5 +73,16 @@ public:
 private:
 };
 
+class StartModule : public Module {
+public:
+    StartModule() { }
+    virtual ~StartModule() { }
+};
+
+class EndModule : public Module {
+public:
+    EndModule() { }
+    virtual ~EndModule() { }
+};
 
 #endif //PROCEDURALCITIES_MODULES_H

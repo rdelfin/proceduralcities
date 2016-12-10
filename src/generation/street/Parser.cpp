@@ -11,12 +11,9 @@ Parser::Parser(const GlobalGoals& globalGoals, const LocalConstraints& localCons
     : globalGoals(globalGoals), localConstraints(localConstraints) {
     // Initialize using axiom (omega)
     DelayAttribute* delayAttribute = new DelayAttribute(0);
-    RoadAttribute* roadAttribute = new RoadAttribute;
+    RoadAttribute* roadAttribute = new RoadAttribute(0, 0); // TODO wtf do I put here
     RuleAttribute* ruleAttribute = new RuleAttribute;
     StateAttribute* stateAttribute = new StateAttribute(STATE_UNASSIGNED);
-
-    roadAttribute->angle = 0; // TODO: What to put here?
-    roadAttribute->length = 0; // TODO: Same tbh
 
     modules.push_back(new RoadModule(delayAttribute, ruleAttribute));
     modules.push_back(new InquiryModule(roadAttribute, stateAttribute));
@@ -24,7 +21,7 @@ Parser::Parser(const GlobalGoals& globalGoals, const LocalConstraints& localCons
 
 std::vector<Module*> Parser::parse() {
     std::vector<Module*> newModules;
-    for(int i = 0; i < modules.size(); i++) {
+    for(int i = 0; i < (long)modules.size(); i++) {
 
         // p1
         if(dynamic_cast<RoadModule*>(modules[i]) &&
@@ -36,7 +33,7 @@ std::vector<Module*> Parser::parse() {
         }
 
         // p2
-        else if(i < modules.size() - 1 &&
+        else if(i < (long)modules.size() - 1 &&
                 dynamic_cast<RoadModule*>(modules[i]) && dynamic_cast<InquiryModule*>(modules[i + 1]) &&
                 dynamic_cast<InquiryModule*>(modules[i + 1])->getStateAttribute()->state == STATE_SUCCEEDED) {
             RoadModule* rm = dynamic_cast<RoadModule*>(modules[i]);
@@ -48,7 +45,9 @@ std::vector<Module*> Parser::parse() {
 
             globalGoals(*im->getRoadAttribute(), *rm->getRuleAttribute(),  delayAttr, ruleAttr, roadAttr);
 
-            // TODO: Figure out what +() and F() is
+            // Equivalent to +() and F()
+            newModules.push_back( new DrawnRoadModule( new RoadAttribute(*im->getRoadAttribute()) ) );
+
             newModules.push_back(new BranchModule(new DelayAttribute(delayAttr[1]),
                                                new RuleAttribute(ruleAttr[1]),
                                                new RoadAttribute(roadAttr[1])));
@@ -61,7 +60,7 @@ std::vector<Module*> Parser::parse() {
         }
 
         // p3
-        else if(i < modules.size() - 1 &&
+        else if(i < (long)modules.size() - 1 &&
                 dynamic_cast<RoadModule*>(modules[i]) && dynamic_cast<InquiryModule*>(modules[i + 1]) &&
                 dynamic_cast<InquiryModule*>(modules[i + 1])->getStateAttribute()->state == STATE_FAILED) {
             newModules.push_back(new TerminationModule);
@@ -80,10 +79,12 @@ std::vector<Module*> Parser::parse() {
         else if(dynamic_cast<BranchModule*>(modules[i]) &&
                 dynamic_cast<BranchModule*>(modules[i])->getDelayAttribute()->delay == 0) {
             BranchModule* bm = dynamic_cast<BranchModule*>(modules[i]);
+            newModules.push_back( new StartModule );
             newModules.push_back( new RoadModule( new DelayAttribute(bm->getDelayAttribute()->delay),
                                                   new RuleAttribute(*bm->getRuleAttribute()) ) );
             newModules.push_back( new InquiryModule( new RoadAttribute(*bm->getRoadAttribute()),
-                                                     new StateAttribute(STATE_UNASSIGNED) ));
+                                                     new StateAttribute(STATE_UNASSIGNED) ) );
+            newModules.push_back( new EndModule );
         }
 
         // p6
@@ -104,7 +105,7 @@ std::vector<Module*> Parser::parse() {
                 dynamic_cast<InquiryModule*>(modules[i])->getStateAttribute()->state == STATE_UNASSIGNED) {
             InquiryModule* im = dynamic_cast<InquiryModule*>(modules[i]);
             const RoadAttribute* oldRoadAttr = im->getRoadAttribute();
-            RoadAttribute newRoadAttr;
+            RoadAttribute newRoadAttr(0, 0);
             StateAttribute newStateAttr(STATE_UNASSIGNED);
 
             localConstraints(*oldRoadAttr, newRoadAttr, newStateAttr);
@@ -137,6 +138,8 @@ std::vector<Module*> Parser::parse() {
     }
 
     modules = newModules;
+
+    return newModules;
 }
 
 Parser::~Parser() {

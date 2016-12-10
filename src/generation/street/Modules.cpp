@@ -89,6 +89,20 @@ BranchModule::~BranchModule() {
 
 }
 
+DrawnRoadModule::DrawnRoadModule(RoadAttribute* roadAttribute) {
+    addAttribute(roadAttribute);
+}
+
+const RoadAttribute* DrawnRoadModule::getRoadAttribute() {
+    for(Attribute* at : attributes) {
+        if(dynamic_cast<RoadAttribute*>(at)) {
+            return (RoadAttribute*)at;
+        }
+    }
+
+    return nullptr;
+}
+
 InquiryModule::InquiryModule(RoadAttribute* roadAttribute, StateAttribute* stateAttribute) {
     this->addAttribute(roadAttribute);
     this->addAttribute(stateAttribute);

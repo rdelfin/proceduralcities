@@ -17,6 +17,7 @@ struct Attribute {
 };
 
 struct RoadAttribute : public Attribute {
+    RoadAttribute(float length, float angle) : length(length), angle(angle) { }
     float length;
     float angle; // In radians
 
