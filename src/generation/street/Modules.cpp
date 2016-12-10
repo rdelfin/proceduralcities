@@ -26,13 +26,90 @@ RoadModule::RoadModule(DelayAttribute* delayAttribute, RuleAttribute* ruleAttrib
     this->addAttribute(ruleAttribute);
 }
 
+const DelayAttribute* RoadModule::getDelayAttribute() {
+    for(Attribute* at : attributes) {
+        if(dynamic_cast<DelayAttribute*>(at)) {
+            return (DelayAttribute*)at;
+        }
+    }
+
+    return nullptr;
+}
+
+const RuleAttribute* RoadModule::getRuleAttribute() {
+    for(Attribute* at : attributes) {
+        if(dynamic_cast<RuleAttribute*>(at)) {
+            return (RuleAttribute*)at;
+        }
+    }
+
+    return nullptr;
+}
+
 RoadModule::~RoadModule() {
 
 }
 
+BranchModule::BranchModule(DelayAttribute* delayAttribute, RuleAttribute* ruleAttribute, RoadAttribute* roadAttribute) {
+    addAttribute(delayAttribute);
+    addAttribute(ruleAttribute);
+    addAttribute(roadAttribute);
+}
+
+const DelayAttribute* BranchModule::getDelayAttribute() {
+    for(Attribute* at : attributes) {
+        if(dynamic_cast<DelayAttribute*>(at)) {
+            return (DelayAttribute*)at;
+        }
+    }
+
+    return nullptr;
+}
+
+const RuleAttribute* BranchModule::getRuleAttribute() {
+    for(Attribute* at : attributes) {
+        if(dynamic_cast<RuleAttribute*>(at)) {
+            return (RuleAttribute*)at;
+        }
+    }
+
+    return nullptr;
+}
+const RoadAttribute* BranchModule::getRoadAttribute() {
+    for(Attribute* at : attributes) {
+        if(dynamic_cast<RoadAttribute*>(at)) {
+            return (RoadAttribute*)at;
+        }
+    }
+
+    return nullptr;
+}
+
+virtual ~BranchModule();
+
 InquiryModule::InquiryModule(RoadAttribute* roadAttribute, StateAttribute* stateAttribute) {
     this->addAttribute(roadAttribute);
     this->addAttribute(stateAttribute);
+}
+
+const RoadAttribute* InquiryModule::getRoadAttribute() {
+    for(Attribute* at : attributes) {
+        if(dynamic_cast<RoadAttribute*>(at)) {
+            return (RoadAttribute*)at;
+        }
+    }
+
+    return nullptr;
+}
+
+const StateAttribute* InquiryModule::getStateAttribute() {
+    for(Attribute* at : attributes) {
+        if(dynamic_cast<StateAttribute*>(at)) {
+            return (StateAttribute*)at;
+        }
+    }
+
+    return nullptr;
 }
 
 InquiryModule::~InquiryModule() {

@@ -28,15 +28,18 @@ struct RuleAttribute : public Attribute {
 };
 
 struct StateAttribute : public Attribute {
+    StateAttribute(State state) : state(state) { }
+
     virtual ~StateAttribute() { }
 
     State state;
 };
 
 struct DelayAttribute : public Attribute {
+    DelayAttribute(int delay) : delay(delay) { }
     virtual ~DelayAttribute() { }
 
-    float delay;
+    int delay;
 };
 
 #endif //PROCEDURALCITIES_ATTRIBUTES_H

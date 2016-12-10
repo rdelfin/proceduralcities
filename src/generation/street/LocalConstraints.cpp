@@ -9,6 +9,10 @@ LocalConstraints::LocalConstraints() {
 
 }
 
+void LocalConstraints::operator()(const RoadAttribute& roadAttributes, RoadAttribute& newRoadAttributes, StateAttribute& newState) {
+    getAttributes(roadAttributes, newRoadAttributes, newState);
+}
+
 void LocalConstraints::getAttributes(const RoadAttribute& roadAttributes, RoadAttribute& newRoadAttributes, StateAttribute& newState) {
 
 }

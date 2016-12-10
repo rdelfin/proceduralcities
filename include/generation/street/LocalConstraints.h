@@ -12,6 +12,7 @@ class LocalConstraints {
 public:
     LocalConstraints();
 
+    void operator()(const RoadAttribute& roadAttributes, RoadAttribute& newRoadAttributes, StateAttribute& newState);
     void getAttributes(const RoadAttribute& roadAttributes, RoadAttribute& newRoadAttributes, StateAttribute& newState);
 
     ~LocalConstraints();

@@ -6,16 +6,20 @@
 #define PROCEDURALCITIES_PARSER_H
 
 #include <generation/street/Modules.h>
+#include <generation/street/GlobalGoals.h>
+#include <generation/street/LocalConstraints.h>
 
 class Parser {
 private:
-    Parser();
+    Parser(const GlobalGoals& globalGoals, const LocalConstraints& localConstraints);
 
     std::vector<Module*> parse();
 
     ~Parser();
 public:
     std::vector<Module*> modules;
+    GlobalGoals globalGoals;
+    LocalConstraints localConstraints;
 };
 
 

@@ -19,7 +19,7 @@ public:
 
     virtual ~Module();
 
-private:
+protected:
     std::vector<Attribute*> attributes;
 };
 
@@ -27,6 +27,9 @@ private:
 class RoadModule : public Module {
 public:
     RoadModule(DelayAttribute* delayAttribute, RuleAttribute* ruleAttribute);
+
+    const DelayAttribute* getDelayAttribute();
+    const RuleAttribute* getRuleAttribute();
 
     virtual ~RoadModule();
 private:
@@ -36,7 +39,28 @@ class InquiryModule : public Module {
 public:
     InquiryModule(RoadAttribute* roadAttribute, StateAttribute* stateAttribute);
 
+    const RoadAttribute* getRoadAttribute();
+    const StateAttribute* getStateAttribute();
+
     virtual ~InquiryModule();
+private:
+};
+
+class BranchModule : public Module {
+public:
+    BranchModule(DelayAttribute* delayAttribute, RuleAttribute* ruleAttribute, RoadAttribute* roadAttribute);
+
+    const DelayAttribute* getDelayAttribute();
+    const RuleAttribute* getRuleAttribute();
+    const RoadAttribute* getRoadAttribute();
+
+    virtual ~BranchModule();
+};
+
+class TerminationModule : public Module {
+public:
+    TerminationModule() { }
+    virtual ~TerminationModule() { }
 private:
 };
 
