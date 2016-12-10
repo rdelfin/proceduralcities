@@ -16,14 +16,14 @@ void Module::addAttribute(Attribute* attribute) {
 }
 
 Module::~Module() {
-    for(Attribute attribute : attributes) {
+    for(Attribute* attribute : attributes) {
         delete attribute;
     }
 }
 
-RoadModule::RoadModule(DelayAttribute* delayAttribute, RoadAttribute* roadAttribute) {
+RoadModule::RoadModule(DelayAttribute* delayAttribute, RuleAttribute* ruleAttribute) {
     this->addAttribute(delayAttribute);
-    this->addAttribute(roadAttribute);
+    this->addAttribute(ruleAttribute);
 }
 
 RoadModule::~RoadModule() {

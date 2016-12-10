@@ -5,8 +5,7 @@
 #ifndef PROCEDURALCITIES_PARSER_H
 #define PROCEDURALCITIES_PARSER_H
 
-#include <Parser.h>
-#include <Modules.h>
+#include <generation/street/Modules.h>
 
 class Parser {
 private:

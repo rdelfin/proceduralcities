@@ -7,6 +7,8 @@
 
 #include <generation/street/Attributes.h>
 
+#include <vector>
+
 class GlobalGoals {
 public:
     GlobalGoals();

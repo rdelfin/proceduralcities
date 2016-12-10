@@ -6,14 +6,15 @@
 #define PROCEDURALCITIES_LOCALCONSTRAINTS_H
 
 #include <generation/street/LocalConstraints.h>
+#include <generation/street/Attributes.h>
 
 class LocalConstraints {
 public:
-    PublicConstraints();
+    LocalConstraints();
 
-    void getAttributes(const RoadAttributes& roadAttributes, RoadAttributes& newRoadAttributes, State& newState);
+    void getAttributes(const RoadAttribute& roadAttributes, RoadAttribute& newRoadAttributes, StateAttribute& newState);
 
-    ~PublicConstraints();
+    ~LocalConstraints();
 private:
 };
 

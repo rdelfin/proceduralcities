@@ -17,8 +17,8 @@ Parser::Parser() {
     roadAttribute->length = 0; // TODO: Same tbh
     stateAttribute->state = STATE_SUCCEEDED;
 
-    modules.push_back(new RoadModule(delayAttribute, roadAttribute));
-    modules.push_back(new InquiryModule(delayAttribute, stateAttribute));
+    modules.push_back(new RoadModule(delayAttribute, ruleAttribute));
+    modules.push_back(new InquiryModule(roadAttribute, stateAttribute));
 }
 
 std::vector<Module*> parse() {

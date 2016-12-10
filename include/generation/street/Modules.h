@@ -26,7 +26,7 @@ private:
 
 class RoadModule : public Module {
 public:
-    RoadModule(DelayAttribute* delayAttribute, RoadAttribute* roadAttribute);
+    RoadModule(DelayAttribute* delayAttribute, RuleAttribute* ruleAttribute);
 
     virtual ~RoadModule();
 private:
