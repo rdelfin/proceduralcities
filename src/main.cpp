@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <time.h>
+#include <stdlib.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -18,6 +20,7 @@
 #include <TriangleMesh.h>
 #include <sstream>
 #include <camera.h>
+#include <StreetMap.h>
 
 using namespace std;
 
@@ -43,6 +46,8 @@ ErrorCallback(int error, const char* description)
 
 
 int main() {
+    srand (time(NULL));
+
     std::string window_title = "City Generator";
     if (!glfwInit()) exit(EXIT_FAILURE);
     glfwSetErrorCallback(ErrorCallback);
@@ -82,7 +87,8 @@ int main() {
            fragmentShader("resources/shaders/default.frag"),
            floorFragmentShader("resources/shaders/floor.frag"),
            waterFragmentShader("resources/shaders/water.frag"),
-           parksFragmentShader("resources/shaders/parks.frag");
+           parksFragmentShader("resources/shaders/parks.frag"),
+           streetFragmentShader("resources/shaders/streets.frag");
 
     auto view_matrix_data_source = []() -> const void* {
         return &camera.getViewMatrix();
@@ -113,10 +119,12 @@ int main() {
 
     Floor floor;
     Area area;
+    StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters);
 
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
     TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);
     TriangleMesh parksMesh(area.parksVertices, area.parksNormals, area.parksFaces, vertexShader, geometryShader, parksFragmentShader, uniforms);
+    TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
     //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
 
     while (!glfwWindowShouldClose(window)) {
@@ -136,6 +144,7 @@ int main() {
         floorMesh.draw();
         waterMesh.draw();
         parksMesh.draw();
+        streetMesh.draw();
         //mesh.draw();
 
         // Poll and swap.
