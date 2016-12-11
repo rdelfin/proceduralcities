@@ -2,6 +2,7 @@
 // Created by rdelfin on 12/10/16.
 //
 
+#include <iostream>
 #include "generation/street/Modules.h"
 
 #include "generation/street/Attributes.h"
@@ -9,6 +10,21 @@
 
 Module::Module() {
 
+}
+
+Module::Module(const Module& otherMod) {
+    for(Attribute* attribute : otherMod.attributes) {
+        if(dynamic_cast<RoadAttribute*>(attribute))
+            attributes.push_back(new RoadAttribute(*(RoadAttribute*)attribute));
+        if(dynamic_cast<RuleAttribute*>(attribute))
+            attributes.push_back(new RuleAttribute(*(RuleAttribute*)attribute));
+        if(dynamic_cast<StateAttribute*>(attribute))
+            attributes.push_back(new StateAttribute(*(StateAttribute*)attribute));
+        if(dynamic_cast<DelayAttribute*>(attribute))
+            attributes.push_back(new DelayAttribute(*(DelayAttribute*)attribute));
+        else
+            attributes.push_back(new Attribute(*attribute));
+    }
 }
 
 void Module::addAttribute(Attribute* attribute) {
