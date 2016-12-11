@@ -24,29 +24,29 @@ void LocalConstraints::getAttributes(const RoadAttribute& roadAttributes, RoadAt
     newRoadAttributes = roadAttributes;
 
     bool streetFound = false;
-    double lengthDelta = 0.0f;
-    double angleDelta = 0.0f;
+    float lengthDelta = 0.0f;
+    float angleDelta = 0.0f;
     while(!streetFound) {
-        newRoadAttributes.length -= roadAttributes.length - lengthDelta;
-        newRoadAttributes.angle += roadAttributes.angle + angleDelta;
+        newRoadAttributes.length = roadAttributes.length - lengthDelta;
+        newRoadAttributes.angle = roadAttributes.angle + angleDelta;
 
         streetFound = collidesWithEnvironment(newRoadAttributes.end());
         if(streetFound) break;
 
-        newRoadAttributes.angle += roadAttributes.angle - angleDelta;
+        newRoadAttributes.angle = roadAttributes.angle - angleDelta;
         streetFound = collidesWithEnvironment(newRoadAttributes.end());
 
-        lengthDelta -= 0.1f;
-        if(lengthDelta < minLength) {
+        lengthDelta += 0.1f;
+        if(roadAttributes.length - lengthDelta < minLength) {
             lengthDelta = 0.0f;
             angleDelta += 0.01f;
 
             if(angleDelta > maxDeltaAngle)
                 break;
         }
-
-        newState = streetFound ? STATE_SUCCEEDED : STATE_FAILED;
     }
+
+    newState = streetFound ? STATE_SUCCEEDED : STATE_FAILED;
 }
 
 bool LocalConstraints::collidesWithEnvironment(glm::vec2 point) {

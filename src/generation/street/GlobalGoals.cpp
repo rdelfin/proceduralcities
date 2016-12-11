@@ -36,18 +36,16 @@ void GlobalGoals::operator()(const RoadAttribute* roadAttribute, const RuleAttri
 void GlobalGoals::getAttribs(const RoadAttribute* roadAttribute, const RuleAttribute* ruleAttribute,
                 std::vector<DelayAttribute*>& pDel, std::vector<RuleAttribute*>& pRuleAttr, std::vector<RoadAttribute*>& pRoadAttr) {
     if(dynamic_cast<const RectangleRuleAttribute*>(ruleAttribute)) {
-        glm::vec2 roadEnd = roadAttribute->start +
-                            roadAttribute->length * glm::vec2(cos(roadAttribute->angle), sin(roadAttribute->angle));
-
+        glm::vec2 roadEnd = roadAttribute->end();
 
         const RectangleRuleAttribute* rectRuleAttr = dynamic_cast<const RectangleRuleAttribute*>(ruleAttribute);
 
         pDel.push_back(new DelayAttribute(1));
         pDel.push_back(new DelayAttribute(1));
         pDel.push_back(new DelayAttribute(1));
-        pRuleAttr.push_back((RuleAttribute*)ruleAttribute->copy());
-        pRuleAttr.push_back((RuleAttribute*)ruleAttribute->copy());
-        pRuleAttr.push_back((RuleAttribute*)ruleAttribute->copy());
+        pRuleAttr.push_back((RuleAttribute*)rectRuleAttr->copy());
+        pRuleAttr.push_back((RuleAttribute*)rectRuleAttr->copy());
+        pRuleAttr.push_back((RuleAttribute*)rectRuleAttr->copy());
 
         float widthAngleDiff = min(abs(angleDiff(roadAttribute->angle, rectRuleAttr->initialAngle)),
                                    abs(angleDiff(roadAttribute->angle, constrainAngle(rectRuleAttr->initialAngle + 90))));

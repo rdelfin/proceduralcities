@@ -38,6 +38,7 @@ void StreetSegment::addLines(std::vector<glm::vec4>& vertices, std::vector<glm::
         vertices.push_back(glm::vec4(vec, 1.0f));
         if(i > 0)
             lines.push_back(glm::uvec2(verticesIdx + i - 1, verticesIdx + i));
+        i++;
     }
 
 }

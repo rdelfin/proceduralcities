@@ -6,6 +6,7 @@
 #include <generation/street/Parser.h>
 #include <iostream>
 #include <Area.h>
+#include <glm/gtx/string_cast.hpp>
 
 int main() {
     Area area;
@@ -17,10 +18,22 @@ glm::vec2() + glm::vec2();
         std::vector<Module *> iteration = parser.substitution();
         std::cout << "Iteration " << i << ": ";
         for (Module *module : iteration) {
-            if (dynamic_cast<RoadModule *>(module)) std::cout << "{ROAD MODULE} ";
-            if (dynamic_cast<InquiryModule *>(module)) std::cout << "{INQUIRY MODULE} ";
+            if (dynamic_cast<RoadModule *>(module)) {
+                RoadModule* rm = dynamic_cast<RoadModule *>(module);
+                std::cout << "{ROAD MODULE (d:" << rm->getDelayAttribute()->delay << ")} ";
+            }
+            if (dynamic_cast<InquiryModule *>(module)) {
+                InquiryModule* im = dynamic_cast<InquiryModule *>(module);
+                std::cout << "{INQUIRY MODULE (theta: " << im->getRoadAttribute()->angle
+                          << ", len: " << im->getRoadAttribute()->length << ", state:" << im->getStateAttribute()->state << ")} ";
+            }
             if (dynamic_cast<BranchModule *>(module)) std::cout << "{BRANCH MODULE} ";
-            if (dynamic_cast<DrawnRoadModule *>(module)) std::cout << "{DRAWN ROAD MODULE} ";
+            if (dynamic_cast<DrawnRoadModule *>(module)) {
+                DrawnRoadModule* drm = dynamic_cast<DrawnRoadModule *>(module);
+                std::cout << "{DRAWN ROAD MODULE (s:" << glm::to_string(drm->getRoadAttribute()->start)
+                          << ", theta:" << drm->getRoadAttribute()->angle
+                          << ", len: " << drm->getRoadAttribute()->length << ")} ";
+            }
             if (dynamic_cast<StartModule *>(module)) std::cout << "{START MODULE} ";
             if (dynamic_cast<EndModule *>(module)) std::cout << "{END MODULE} ";
         }

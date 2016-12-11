@@ -67,7 +67,7 @@ LineMesh::LineMesh(const std::vector<glm::vec4>& vertices, const std::vector<glm
 
     // Add the index (aka the faces)
     CHECK_GL_ERROR(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[2]));
-    CHECK_GL_ERROR(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::uvec2) * this->faces.size() - 2, this->faces.data(), GL_STATIC_DRAW));
+    CHECK_GL_ERROR(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::uvec2) * this->faces.size(), this->faces.data(), GL_STATIC_DRAW));
 
     // Add uniform locations
     program.addUniformLocations();

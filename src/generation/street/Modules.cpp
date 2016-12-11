@@ -23,7 +23,7 @@ void Module::addAttribute(Attribute* attribute) {
 
 Module::~Module() {
     for(Attribute* attribute : attributes) {
-        delete attribute;
+        //delete attribute;
     }
 }
 

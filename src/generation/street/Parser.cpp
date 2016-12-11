@@ -7,6 +7,7 @@
 #include <generation/street/Modules.h>
 
 #include <vector>
+#include <iostream>
 
 #define PI 3.14159265f
 
@@ -14,8 +15,8 @@ Parser::Parser(const GlobalGoals& globalGoals, const LocalConstraints& localCons
     : globalGoals(globalGoals), localConstraints(localConstraints) {
     // Initialize using axiom (omega)
     DelayAttribute* delayAttribute = new DelayAttribute(0);
-    RoadAttribute* roadAttribute = new RoadAttribute(1, 0, glm::vec2(0, 0)); // TODO wtf do I put here
-    RuleAttribute* ruleAttribute = new RectangleRuleAttribute((rand() % 180 + 1) * PI/180.0f, 5, 10); // TODO: Pass in through constructor
+    RoadAttribute* roadAttribute = new RoadAttribute(5, (rand() % 180 + 1) * PI/180.0f, glm::vec2(0, 0)); // TODO wtf do I put here
+    RuleAttribute* ruleAttribute = new RectangleRuleAttribute(roadAttribute->angle, 5, 10); // TODO: Pass in through constructor
     StateAttribute* stateAttribute = new StateAttribute(STATE_UNASSIGNED);
 
     modules.push_back(new RoadModule(delayAttribute, ruleAttribute));
@@ -127,7 +128,7 @@ std::vector<Module*> Parser::substitution() {
     }
 
     for(Module* mod : modules) {
-        delete mod;
+        //delete mod;
     }
 
     modules = newModules;
@@ -146,8 +147,8 @@ std::vector<StreetSegment> Parser::parser() {
             glm::vec2 start = attr->start, end = attr->start + attr->length*glm::vec2(cos(attr->angle), sin(attr->angle));
 
             std::vector<glm::vec3> waypoints =
-                    { glm::vec3(start.x, 0.0f, start.y),
-                      glm::vec3(end.x, 0.0f, end.y) };
+                    { glm::vec3(start.x, -2.0f, start.y),
+                      glm::vec3(end.x, -2.0f, end.y) };
             streets.push_back(StreetSegment(waypoints, nullptr, nullptr));
         }
     }

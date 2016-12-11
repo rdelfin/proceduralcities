@@ -23,6 +23,9 @@
 #include <sstream>
 #include <camera.h>
 #include <StreetMap.h>
+#include <generation/street/Parser.h>
+
+#define PARSE_LEVEL 10
 
 using namespace std;
 
@@ -77,12 +80,12 @@ int main() {
     std::cout << "Renderer: " << renderer << "\n";
     std::cout << "OpenGL version supported:" << version << "\n";
 
-    // Create objects
+    /*// Create objects
     std::vector<glm::vec4> vertices;
     std::vector<glm::uvec3> faces;
     std::vector<glm::vec4> normals;
 
-    load_teapot(vertices, faces, normals);
+    load_teapot(vertices, faces, normals);*/
 
     Shader vertexShader("resources/shaders/default.vert"),
            geometryShader("resources/shaders/default.geom"),
@@ -91,7 +94,8 @@ int main() {
            floorFragmentShader("resources/shaders/floor.frag"),
            waterFragmentShader("resources/shaders/water.frag"),
            parksFragmentShader("resources/shaders/parks.frag"),
-           streetFragmentShader("resources/shaders/streets.frag");
+           streetFragmentShader("resources/shaders/streets.frag"),
+           streetGeometryShader("resources/shaders/street.geom");
 
     auto view_matrix_data_source = []() -> const void* {
         return &camera.getViewMatrix();
@@ -125,15 +129,39 @@ int main() {
     Area area;
     AreaLine areaLine;
     int i, j;
-    vector<LineMesh> waterMeshes;
-    vector<LineMesh> parksMeshes;
-    StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
+    //vector<LineMesh> waterMeshes;
+    //vector<LineMesh> parksMeshes;
+    //StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
+
+    std::vector<glm::vec4> streetVertices, streetNormals;
+    std::vector<glm::uvec2> streetLines;
+
+    GlobalGoals globalGoals;
+    LocalConstraints localConstraints(area.waterPoints, area.parksPoints);
+    Parser parser(globalGoals, localConstraints);
+
+    // Parse 10 times
+    for(int i = 0; i < PARSE_LEVEL; i++) {
+        parser.substitution();
+    }
+
+    std::vector<StreetSegment> streets = parser.parser();
+
+    for(StreetSegment ss : streets) {
+        ss.addLines(streetVertices, streetLines);
+    }
+
+    for(auto i = 0; i < streets.size(); i++) {
+        streetNormals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    }
+
 
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
     TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);
     TriangleMesh parksMesh(area.parksVertices, area.parksNormals, area.parksFaces, vertexShader, geometryShader, parksFragmentShader, uniforms);
-    TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
+    //TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
     //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
+    LineMesh streetMesh(streetVertices, streetNormals, streetLines, vertexShader, linesGeometryShader, streetFragmentShader, uniforms);
 
     while (!glfwWindowShouldClose(window)) {
         // Setup some basic window stuff.
