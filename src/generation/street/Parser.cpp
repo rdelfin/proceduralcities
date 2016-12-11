@@ -147,8 +147,8 @@ std::vector<StreetSegment> Parser::parser() {
             glm::vec2 start = attr->start, end = attr->start + attr->length*glm::vec2(cos(attr->angle), sin(attr->angle));
 
             std::vector<glm::vec3> waypoints =
-                    { glm::vec3(start.x, -2.0f, start.y),
-                      glm::vec3(end.x, -2.0f, end.y) };
+                    { glm::vec3(start.x, -1.90f, start.y),
+                      glm::vec3(end.x, -1.90f, end.y) };
             streets.push_back(StreetSegment(waypoints, nullptr, nullptr));
         }
     }

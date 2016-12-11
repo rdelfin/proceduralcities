@@ -25,7 +25,7 @@
 #include <StreetMap.h>
 #include <generation/street/Parser.h>
 
-#define PARSE_LEVEL 10
+#define PARSE_LEVEL 13
 
 using namespace std;
 
@@ -134,7 +134,7 @@ int main() {
     //StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
 
     std::vector<glm::vec4> streetVertices, streetNormals;
-    std::vector<glm::uvec2> streetLines;
+    std::vector<glm::uvec3> streetFaces;
 
     GlobalGoals globalGoals;
     LocalConstraints localConstraints(area.waterPoints, area.parksPoints);
@@ -148,10 +148,10 @@ int main() {
     std::vector<StreetSegment> streets = parser.parser();
 
     for(StreetSegment ss : streets) {
-        ss.addLines(streetVertices, streetLines);
+        ss.addLines(streetVertices, streetFaces, glm::vec3(0.0f, 1.0f, 0.0f), 1.0f);
     }
 
-    for(auto i = 0; i < streets.size(); i++) {
+    for(auto i = 0; i < streetVertices.size(); i++) {
         streetNormals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
     }
 
@@ -161,13 +161,13 @@ int main() {
     TriangleMesh parksMesh(area.parksVertices, area.parksNormals, area.parksFaces, vertexShader, geometryShader, parksFragmentShader, uniforms);
     //TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
     //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
-    LineMesh streetMesh(streetVertices, streetNormals, streetLines, vertexShader, linesGeometryShader, streetFragmentShader, uniforms);
+    TriangleMesh streetMesh(streetVertices, streetNormals, streetFaces, vertexShader, geometryShader, streetFragmentShader, uniforms);
 
     while (!glfwWindowShouldClose(window)) {
         // Setup some basic window stuff.
         glfwGetFramebufferSize(window, &window_width, &window_height);
         glViewport(0, 0, window_width, window_height);
-        glClearColor(0.390625f, 0.58203125f, 0.92578125f, 1.0f);           // Cornflower blue, according to microsoft, the best background color
+        glClearColor(0.390625f, 0.58203125f, 0.92578125f, 1.0f);           // Cornflower blue which, according to Microsoft, is the best background color
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_MULTISAMPLE);
         glEnable(GL_BLEND);

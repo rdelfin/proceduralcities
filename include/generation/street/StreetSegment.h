@@ -17,7 +17,7 @@ public:
 
     glm::vec3 get(float val);
 
-    void addLines(std::vector<glm::vec4>& vertices, std::vector<glm::uvec2>& lines);
+    void addLines(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, glm::vec3 up, float width);
 
     ~StreetSegment();
 private:
