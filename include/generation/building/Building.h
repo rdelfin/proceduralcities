@@ -37,6 +37,7 @@ class Building {
         void drawPrism(float minx, float miny, float minz, float maxx, float maxy, float maxz);
         void drawU(float minx, float miny, float minz, float maxx, float maxy, float maxz);
         void drawPyramid(float minx, float minz, float maxx, float maxz);
+        void drawL(float minx, float miny, float minz, float maxx, float maxy, float maxz);
         int index;
 };
 

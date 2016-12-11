@@ -33,12 +33,12 @@ void Building::nextIteration() {
         }
         case HOUSE: {
             height = rand() % 3 + 1;
-            type = rand() % 3 + 1;
+            type = rand() % 2 + 1;
             break;
         }
     }
     
-    type = 3;
+    type = 4;
 }
 
 void Building::quad(glm::vec4 points[], int a, int b, int c, int d) {
@@ -322,6 +322,116 @@ void Building::drawPyramid(float minx, float minz, float maxx, float maxz) {
 	faces.push_back(glm::uvec3(index++, index++, index++));
 }
 
+void Building::drawL(float minx, float miny, float minz, float maxx, float maxy, float maxz) {
+    // Define vertices
+    float x1 = minx + (maxx - minx) * .25f;
+    float z1 = minz + (maxz - minz) * .75f;
+	glm::vec4 points[13] = {
+        glm::vec4(minx, miny, maxz, 1.0f),  // 0
+		glm::vec4(minx, maxy, maxz, 1.0f),  // 1
+		glm::vec4(maxx, maxy, maxz, 1.0f),  // 2
+		glm::vec4(maxx, miny, maxz, 1.0f),  // 3
+		glm::vec4(minx, miny, minz, 1.0f),  // 4
+		glm::vec4(minx, maxy, minz, 1.0f),  // 5
+        glm::vec4(x1, miny, minz, 1.0f),    // 6
+		glm::vec4(x1, maxy, minz, 1.0f),    // 7
+		glm::vec4(maxx, miny, z1, 1.0f),    // 8
+		glm::vec4(maxx, maxy, z1, 1.0f),    // 9
+        glm::vec4(x1, miny, z1, 1.0f),      // 10
+		glm::vec4(x1, maxy, z1, 1.0f),      // 11
+        glm::vec4(x1, maxy, maxz, 1.0f),    // 12
+	};
+
+	// Generate all the cubes faces
+	// Back
+	quad(points, 1, 0, 3, 2);
+	normals.push_back(glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+	normals.push_back(glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+	normals.push_back(glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+	normals.push_back(glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+	normals.push_back(glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+	normals.push_back(glm::vec4(0.0f, 0.0f, 1.0f, 0.0f));
+	faces.push_back(glm::uvec3(index++, index++, index++));
+	faces.push_back(glm::uvec3(index++, index++, index++));
+
+	// Right back
+    quad(points, 3, 2, 9, 8);
+    normals.push_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    faces.push_back(glm::uvec3(index++, index++, index++));
+	faces.push_back(glm::uvec3(index++, index++, index++));
+
+    // Right front
+    quad(points, 11, 10, 6, 7);
+    normals.push_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(1.0f, 0.0f, 0.0f, 0.0f));
+    faces.push_back(glm::uvec3(index++, index++, index++));
+	faces.push_back(glm::uvec3(index++, index++, index++));
+    
+    // Top Left
+    quad(points, 1, 5, 7, 12); 
+    normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    faces.push_back(glm::uvec3(index++, index++, index++));
+	faces.push_back(glm::uvec3(index++, index++, index++));
+
+    // Top Right
+    quad(points, 12, 11, 9, 3); 
+    normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    faces.push_back(glm::uvec3(index++, index++, index++));
+	faces.push_back(glm::uvec3(index++, index++, index++));
+    
+    // Front Left
+    quad(points, 5, 4, 6, 7);
+    normals.push_back(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)); 
+    normals.push_back(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)); 
+    normals.push_back(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)); 
+    normals.push_back(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)); 
+    normals.push_back(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)); 
+    normals.push_back(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));
+    faces.push_back(glm::uvec3(index++, index++, index++));
+	faces.push_back(glm::uvec3(index++, index++, index++));
+
+    // Front Right
+    quad(points, 11, 10, 8, 9);
+    normals.push_back(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)); 
+    normals.push_back(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)); 
+    normals.push_back(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)); 
+    normals.push_back(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)); 
+    normals.push_back(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)); 
+    normals.push_back(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));
+    faces.push_back(glm::uvec3(index++, index++, index++));
+	faces.push_back(glm::uvec3(index++, index++, index++));
+    
+    // Left
+    quad(points, 5, 4, 0, 1);
+    normals.push_back(glm::vec4(-1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(-1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(-1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(-1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(-1.0f, 0.0f, 0.0f, 0.0f));
+    normals.push_back(glm::vec4(-1.0f, 0.0f, 0.0f, 0.0f));
+    faces.push_back(glm::uvec3(index++, index++, index++));
+	faces.push_back(glm::uvec3(index++, index++, index++));
+}
+
 void Building::generateRenderData() {
     switch (type) {
         // Rectangular building
@@ -336,14 +446,28 @@ void Building::generateRenderData() {
 
             break;
         }
+        // Pointy building
         case 3: {
-            if (style == HOUSE) {
-            }
-            // Pointy building
-            else {
-                drawPrism(-10.0f, 0, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
-                drawPyramid(-10.0f, -10.0f, 10.0f, 10.0f);
-            }
+            drawPrism(-10.0f, 0, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
+            drawPyramid(-10.0f, -10.0f, 10.0f, 10.0f);
+            break;
+        }
+        // L building
+        case 4: { 
+            drawL(-10.0f, 0, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
+            break;
+        }
+        // combination
+        case 5: { 
+            float h1 = height * ((rand() % 50)+51)/100.0f;
+            float h2 = height * ((rand() % 10)+91)/100.0f;
+            float minx1 = -10.0f * (((rand() % 3)+8)/10.0f);
+            float minx2 = -10.0f * (((rand() % 9)+2)/10.0f);
+            float minz1 = -10.0f * (((rand() % 3)+8)/10.0f);
+            float minz2 = -10.0f * (((rand() % 9)+2)/10.0f);
+            // float maxx1 = 
+            drawPrism(minx1, 0, minz1, 10.0f, h1 * FLOOR_HEIGHT, 10.0f);
+            drawL(minx2, 0, minz2, 10.0f, h2 * FLOOR_HEIGHT, 10.0f);
             break;
         }
         default: {
