@@ -70,14 +70,6 @@ public:
     virtual ~DrawnRoadModule() { }
 };
 
-class TerminationModule : public Module {
-public:
-    TerminationModule() { }
-    TerminationModule(const TerminationModule& mod) : Module(mod) { }
-    virtual ~TerminationModule() { }
-private:
-};
-
 class StartModule : public Module {
 public:
     StartModule() { }

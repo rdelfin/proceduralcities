@@ -28,10 +28,7 @@ std::vector<Module*> Parser::substitution() {
         // p1
         if(dynamic_cast<RoadModule*>(modules[i]) &&
            dynamic_cast<RoadModule*>(modules[i])->getDelayAttribute()->delay < 0) {
-            RoadModule* rm = (RoadModule*)modules[i];
-            if(rm->getDelayAttribute()->delay < 0) {
-                newModules.push_back(new TerminationModule);
-            }
+            // Ignore and do not substitute (termination)
         }
 
         // p2
@@ -65,7 +62,7 @@ std::vector<Module*> Parser::substitution() {
         else if(i < (long)modules.size() - 1 &&
                 dynamic_cast<RoadModule*>(modules[i]) && dynamic_cast<InquiryModule*>(modules[i + 1]) &&
                 dynamic_cast<InquiryModule*>(modules[i + 1])->getStateAttribute()->state == STATE_FAILED) {
-            newModules.push_back(new TerminationModule);
+            // Ignore and do not substitute (termination)
         }
 
         // p4
@@ -92,14 +89,14 @@ std::vector<Module*> Parser::substitution() {
         // p6
         else if(dynamic_cast<BranchModule*>(modules[i]) &&
                 dynamic_cast<BranchModule*>(modules[i])->getDelayAttribute()->delay < 0) {
-            newModules.push_back(new TerminationModule);
+            // Ignore and do not substitute (termination)
         }
 
         // p7
         else if(i > 0 &&
                 dynamic_cast<RoadModule*>(modules[i - 1]) && dynamic_cast<InquiryModule*>(modules[i]) &&
                 dynamic_cast<RoadModule*>(modules[i - 1])->getDelayAttribute()->delay < 0) {
-            newModules.push_back(new TerminationModule);
+            // Ignore and do not substitute (termination)
         }
 
         // p8
@@ -119,7 +116,7 @@ std::vector<Module*> Parser::substitution() {
         // p9
         else if(dynamic_cast<InquiryModule*>(modules[i]) &&
                 dynamic_cast<InquiryModule*>(modules[i])->getStateAttribute()->state != STATE_UNASSIGNED) {
-            newModules.push_back(new TerminationModule);
+            // Ignore and do not substitute (termination)
         }
 
         // No substitution
@@ -130,8 +127,6 @@ std::vector<Module*> Parser::substitution() {
                 newModules.push_back(new RoadModule(*(RoadModule*)modules[i]));
             if(dynamic_cast<BranchModule*>(modules[i]))
                 newModules.push_back(new BranchModule(*(BranchModule*)modules[i]));
-            if(dynamic_cast<TerminationModule*>(modules[i]))
-                newModules.push_back(new TerminationModule(*(TerminationModule*)modules[i]));
             if(dynamic_cast<StartModule*>(modules[i]))
                 newModules.push_back(new StartModule(*(StartModule*)modules[i]));
             if(dynamic_cast<EndModule*>(modules[i]))
@@ -158,8 +153,9 @@ std::vector<StreetSegment> Parser::parser() {
         if(dynamic_cast<DrawnRoadModule*>(module)) {
             DrawnRoadModule* drawnRoadModule = dynamic_cast<DrawnRoadModule*>(module);
             const RoadAttribute* attr = drawnRoadModule->getRoadAttribute();
-            std::vector waypoints = { attr->start,
-                                      attr->start + attr->length*glm::vec2(cos(attr->angle), sin(attr->angle)) };
+            std::vector<glm::vec3> waypoints =
+                    { glm::vec3(attr->start, 0.0f),
+                      glm::vec3(attr->start + attr->length*glm::vec2(cos(attr->angle), sin(attr->angle)), 0.0f) };
             streets.push_back(StreetSegment(waypoints, nullptr, nullptr));
         }
     }
