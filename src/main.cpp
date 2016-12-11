@@ -24,6 +24,8 @@
 #include <camera.h>
 #include <StreetMap.h>
 
+#include <generation/building/Building.h>
+
 using namespace std;
 
 void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, std::vector<glm::vec4>& normals);
@@ -91,7 +93,8 @@ int main() {
            floorFragmentShader("resources/shaders/floor.frag"),
            waterFragmentShader("resources/shaders/water.frag"),
            parksFragmentShader("resources/shaders/parks.frag"),
-           streetFragmentShader("resources/shaders/streets.frag");
+           streetFragmentShader("resources/shaders/streets.frag"),
+           buildingFragmentShader("resources/shaders/buildings.frag");
 
     auto view_matrix_data_source = []() -> const void* {
         return &camera.getViewMatrix();
@@ -117,7 +120,7 @@ int main() {
                                             ShaderUniform("view", BINDER_MATRIX4_F, view_matrix_data_source),
                                             ShaderUniform("camera_position", BINDER_VECTOR3_F, camera_data_source) };
 
-    camera.zoom(250.0f);
+    camera.zoom(280.0f);
     camera.pitch((180.0f / M_PI) * -420 / window_width);
     camera.strave(glm::vec3(0, 1, 0));
 
@@ -129,10 +132,14 @@ int main() {
     vector<LineMesh> parksMeshes;
     StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
 
+    Building building(10.0f, 10.0f, 25.0f);
+    building.generateRenderData();
+
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
     TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);
     TriangleMesh parksMesh(area.parksVertices, area.parksNormals, area.parksFaces, vertexShader, geometryShader, parksFragmentShader, uniforms);
     TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
+    TriangleMesh buildingsMesh(building.vertices, building.normals, building.faces, vertexShader, geometryShader, buildingFragmentShader, uniforms);
     //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
 
     while (!glfwWindowShouldClose(window)) {
@@ -153,6 +160,7 @@ int main() {
         streetMesh.draw();
         waterMesh.draw();
         parksMesh.draw();
+        buildingsMesh.draw();
 
         // Poll and swap.
         glfwPollEvents();
