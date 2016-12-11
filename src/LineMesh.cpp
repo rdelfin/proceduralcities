@@ -38,7 +38,7 @@ LineMesh::LineMesh(const std::vector<glm::vec4>& vertices, const std::vector<glm
     // Generate VBO
     vbo.resize(3);
     CHECK_GL_ERROR(glGenBuffers(3, vbo.data()));
-    for (int i = 0; i < vbo.size(); i++) {
+    for (int i = 0; i < (long)vbo.size(); i++) {
         cout << "1 " << vbo[i] << endl;
     }
 

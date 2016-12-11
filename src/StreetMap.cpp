@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <glm/gtx/string_cast.hpp>
 
-#define PI 3.14159265
+#define PI 3.14159265f
 
 #include "StreetMap.h"
 
