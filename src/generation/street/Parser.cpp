@@ -153,9 +153,11 @@ std::vector<StreetSegment> Parser::parser() {
         if(dynamic_cast<DrawnRoadModule*>(module)) {
             DrawnRoadModule* drawnRoadModule = dynamic_cast<DrawnRoadModule*>(module);
             const RoadAttribute* attr = drawnRoadModule->getRoadAttribute();
+            glm::vec2 start = attr->start, end = attr->start + attr->length*glm::vec2(cos(attr->angle), sin(attr->angle));
+
             std::vector<glm::vec3> waypoints =
-                    { glm::vec3(attr->start, 0.0f),
-                      glm::vec3(attr->start + attr->length*glm::vec2(cos(attr->angle), sin(attr->angle)), 0.0f) };
+                    { glm::vec3(start.x, 0.0f, start.y),
+                      glm::vec3(end.x, 0.0f, end.y) };
             streets.push_back(StreetSegment(waypoints, nullptr, nullptr));
         }
     }
