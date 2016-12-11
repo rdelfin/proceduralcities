@@ -25,7 +25,7 @@
 #include <StreetMap.h>
 #include <generation/street/Parser.h>
 
-#define PARSE_LEVEL 30
+#define PARSE_LEVEL 6
 
 using namespace std;
 
@@ -35,7 +35,7 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y);
 
 
-static int window_width = 800, window_height = 600;
+static int window_width = 1024, window_height = 800;
 
 static Camera camera;
 bool g_ctrl_pressed;

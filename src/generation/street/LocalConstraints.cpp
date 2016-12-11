@@ -38,10 +38,10 @@ void LocalConstraints::getAttributes(const RoadAttribute& roadAttributes, RoadAt
 
         lengthDelta += 0.1f;
         if(roadAttributes.length - lengthDelta < minLength) {
-            lengthDelta = 0.0f;
-            angleDelta += 0.01f;
-
-            if(angleDelta > maxDeltaAngle)
+//            lengthDelta = 0.0f;
+//            angleDelta += 0.01f;
+//
+//            if(angleDelta > maxDeltaAngle)
                 break;
         }
     }
