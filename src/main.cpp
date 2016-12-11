@@ -25,7 +25,7 @@
 #include <StreetMap.h>
 #include <generation/street/Parser.h>
 
-#define PARSE_LEVEL 15
+#define PARSE_LEVEL 30
 
 using namespace std;
 

@@ -13,77 +13,70 @@
  */
 class Module {
 public:
-    Module();
-    Module(const Module&);
+    Module() { }
 
     virtual Module* copy() = 0;
 
-    void addAttribute(Attribute*);
-
-    virtual ~Module();
-
-    std::vector<Attribute*> attributes;
+    virtual ~Module() { }
 };
 
 
 class RoadModule : public Module {
 public:
-    RoadModule(DelayAttribute* delayAttribute, RuleAttribute* ruleAttribute);
-    RoadModule(const RoadModule& mod) : Module(mod) { }
+    RoadModule(const DelayAttribute& delayAttribute, const RuleAttribute& ruleAttribute)
+            : delayAttribute(delayAttribute), ruleAttribute(ruleAttribute) { }
 
     virtual Module* copy() {
-        return new RoadModule(*this);
+        return new RoadModule(delayAttribute, ruleAttribute);
     }
 
-    const DelayAttribute* getDelayAttribute();
-    const RuleAttribute* getRuleAttribute();
+    DelayAttribute delayAttribute;
+    RuleAttribute ruleAttribute;
 
-    virtual ~RoadModule();
+    virtual ~RoadModule() { }
 private:
 };
 
 class InquiryModule : public Module {
 public:
-    InquiryModule(RoadAttribute* roadAttribute, StateAttribute* stateAttribute);
-    InquiryModule(const InquiryModule& mod) : Module(mod) { }
+    InquiryModule(const RoadAttribute& roadAttribute, const StateAttribute& stateAttribute) :roadAttribute(roadAttribute), stateAttribute(stateAttribute) { }
 
     virtual Module* copy() {
-        return new InquiryModule(*this);
+        return new InquiryModule(roadAttribute, stateAttribute);
     }
 
-    const RoadAttribute* getRoadAttribute();
-    const StateAttribute* getStateAttribute();
+    RoadAttribute roadAttribute;
+    StateAttribute stateAttribute;
 
-    virtual ~InquiryModule();
+    virtual ~InquiryModule() { }
 private:
 };
 
 class BranchModule : public Module {
 public:
-    BranchModule(DelayAttribute* delayAttribute, RuleAttribute* ruleAttribute, RoadAttribute* roadAttribute);
-    BranchModule(const BranchModule& mod) : Module(mod) { }
+    BranchModule(const DelayAttribute& delayAttribute, const RuleAttribute& ruleAttribute, const RoadAttribute& roadAttribute)
+            : delayAttribute(delayAttribute), ruleAttribute(ruleAttribute), roadAttribute(roadAttribute) { }
 
     virtual Module* copy() {
-        return new BranchModule(*this);
+        return new BranchModule(delayAttribute, ruleAttribute, roadAttribute);
     }
 
-    const DelayAttribute* getDelayAttribute();
-    const RuleAttribute* getRuleAttribute();
-    const RoadAttribute* getRoadAttribute();
+    DelayAttribute delayAttribute;
+    RuleAttribute ruleAttribute;
+    RoadAttribute roadAttribute;
 
-    virtual ~BranchModule();
+    virtual ~BranchModule() { }
 };
 
 class DrawnRoadModule : public  Module {
 public:
-    DrawnRoadModule(RoadAttribute* roadAttribute);
-    DrawnRoadModule(const DrawnRoadModule& mod) : Module(mod) { }
+    DrawnRoadModule(RoadAttribute& roadAttribute) : roadAttribute(roadAttribute) { }
 
     virtual Module* copy() {
-        return new DrawnRoadModule(*this);
+        return new DrawnRoadModule(roadAttribute);
     }
 
-    const RoadAttribute* getRoadAttribute();
+    RoadAttribute roadAttribute;
 
     virtual ~DrawnRoadModule() { }
 };
@@ -91,10 +84,9 @@ public:
 class StartModule : public Module {
 public:
     StartModule() { }
-    StartModule(const StartModule& mod) : Module(mod) {  }
 
     virtual Module* copy() {
-        return new StartModule(*this);
+        return new StartModule();
     }
 
     virtual ~StartModule() { }
@@ -103,10 +95,9 @@ public:
 class EndModule : public Module {
 public:
     EndModule() { }
-    EndModule(const EndModule& mod) : Module(mod) { }
 
     virtual Module* copy() {
-        return new EndModule(*this);
+        return new EndModule();
     }
 
     virtual ~EndModule() { }
