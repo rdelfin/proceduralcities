@@ -12,15 +12,15 @@
 
 using namespace std;
 
-enum roadPattern {
+enum {
     ROAD_BASIC,
     ROAD_RECTANGULAR,
     ROAD_RADIAL
-};
+} typedef RoadPattern;
 
 class StreetMap {
     public:
-        StreetMap(enum roadPattern pattern, vector<glm::vec2> populationCenters, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints);
+        StreetMap(RoadPattern pattern, vector<glm::vec2> populationCenters, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints);
 
         vector<glm::vec4> vertices;
         vector<glm::vec4> normals;

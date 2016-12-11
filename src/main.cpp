@@ -23,6 +23,9 @@
 #include <sstream>
 #include <camera.h>
 #include <StreetMap.h>
+#include <generation/street/Parser.h>
+
+#define PARSE_LEVEL 13
 
 #include <generation/building/Building.h>
 
@@ -79,12 +82,12 @@ int main() {
     std::cout << "Renderer: " << renderer << "\n";
     std::cout << "OpenGL version supported:" << version << "\n";
 
-    // Create objects
+    /*// Create objects
     std::vector<glm::vec4> vertices;
     std::vector<glm::uvec3> faces;
     std::vector<glm::vec4> normals;
 
-    load_teapot(vertices, faces, normals);
+    load_teapot(vertices, faces, normals);*/
 
     Shader vertexShader("resources/shaders/default.vert"),
            geometryShader("resources/shaders/default.geom"),
@@ -94,7 +97,8 @@ int main() {
            waterFragmentShader("resources/shaders/water.frag"),
            parksFragmentShader("resources/shaders/parks.frag"),
            streetFragmentShader("resources/shaders/streets.frag"),
-           buildingFragmentShader("resources/shaders/buildings.frag");
+           buildingFragmentShader("resources/shaders/buildings.frag"),
+           streetGeometryShader("resources/shaders/street.geom");
 
     auto view_matrix_data_source = []() -> const void* {
         return &camera.getViewMatrix();
@@ -128,9 +132,32 @@ int main() {
     Area area;
     AreaLine areaLine;
     int i, j;
-    vector<LineMesh> waterMeshes;
-    vector<LineMesh> parksMeshes;
-    StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
+    //vector<LineMesh> waterMeshes;
+    //vector<LineMesh> parksMeshes;
+    //StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
+
+    std::vector<glm::vec4> streetVertices, streetNormals;
+    std::vector<glm::uvec3> streetFaces;
+
+    GlobalGoals globalGoals;
+    LocalConstraints localConstraints(area.waterPoints, area.parksPoints);
+    Parser parser(globalGoals, localConstraints);
+
+    // Parse 10 times
+    for(int i = 0; i < PARSE_LEVEL; i++) {
+        parser.substitution();
+    }
+
+    std::vector<StreetSegment> streets = parser.parser();
+
+    for(StreetSegment ss : streets) {
+        ss.addLines(streetVertices, streetFaces, glm::vec3(0.0f, 1.0f, 0.0f), 1.0f);
+    }
+
+    for(auto i = 0; i < streetVertices.size(); i++) {
+        streetNormals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    }
+
 
     Building building(10.0f, 10.0f, 25.0f);
     building.generateRenderData();
@@ -138,15 +165,16 @@ int main() {
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
     TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);
     TriangleMesh parksMesh(area.parksVertices, area.parksNormals, area.parksFaces, vertexShader, geometryShader, parksFragmentShader, uniforms);
-    TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
     TriangleMesh buildingsMesh(building.vertices, building.normals, building.faces, vertexShader, geometryShader, buildingFragmentShader, uniforms);
+    //TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
     //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
+    TriangleMesh streetMesh(streetVertices, streetNormals, streetFaces, vertexShader, geometryShader, streetFragmentShader, uniforms);
 
     while (!glfwWindowShouldClose(window)) {
         // Setup some basic window stuff.
         glfwGetFramebufferSize(window, &window_width, &window_height);
         glViewport(0, 0, window_width, window_height);
-        glClearColor(0.390625f, 0.58203125f, 0.92578125f, 1.0f);           // Cornflower blue, according to microsoft, the best background color
+        glClearColor(0.390625f, 0.58203125f, 0.92578125f, 1.0f);           // Cornflower blue which, according to Microsoft, is the best background color
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_MULTISAMPLE);
         glEnable(GL_BLEND);

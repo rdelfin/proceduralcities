@@ -13,18 +13,8 @@ Module::Module() {
 }
 
 Module::Module(const Module& otherMod) {
-    for(Attribute* attribute : otherMod.attributes) {
-        if(dynamic_cast<RoadAttribute*>(attribute))
-            attributes.push_back(new RoadAttribute(*(RoadAttribute*)attribute));
-        if(dynamic_cast<RuleAttribute*>(attribute))
-            attributes.push_back(new RuleAttribute(*(RuleAttribute*)attribute));
-        if(dynamic_cast<StateAttribute*>(attribute))
-            attributes.push_back(new StateAttribute(*(StateAttribute*)attribute));
-        if(dynamic_cast<DelayAttribute*>(attribute))
-            attributes.push_back(new DelayAttribute(*(DelayAttribute*)attribute));
-        else
-            attributes.push_back(new Attribute(*attribute));
-    }
+    for(Attribute* attribute : otherMod.attributes)
+        attributes.push_back(attribute->copy());
 }
 
 void Module::addAttribute(Attribute* attribute) {
@@ -33,7 +23,7 @@ void Module::addAttribute(Attribute* attribute) {
 
 Module::~Module() {
     for(Attribute* attribute : attributes) {
-        delete attribute;
+        //delete attribute;
     }
 }
 

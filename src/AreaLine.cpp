@@ -21,9 +21,9 @@ void Line::sort() {
     float zA;
     float xB;
     float zB;
-    int size = vertices.size();
-    int i;
-    int j;
+    size_t size = vertices.size();
+    size_t i;
+    size_t j;
     glm::vec4 tmp;
     
     for (i = 0; i < size - 1; i++) {
@@ -45,8 +45,8 @@ void Line::sort() {
 }
 
 AreaLine::AreaLine() {
-    int lineNumber = 0;
-    int i;
+    size_t lineNumber = 0;
+    size_t i;
 
     ifstream arch;
     arch.open("resources/model/area.map");
@@ -161,7 +161,7 @@ void AreaLine::createLine(Line &line, int i, int j, int type) {
         line.normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
         line.normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
 
-        line.faces.push_back(glm::vec2(line.index++, line.index++));
+        line.faces.push_back(glm::uvec2(line.index++, line.index++));
 
         line.center[0] += 2 * (j - 100);
         line.center[2] += 2 * (i - 100);

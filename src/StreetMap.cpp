@@ -1,24 +1,22 @@
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
+#include <cstdlib>
+#include <ctime>
+#include <cmath>
 #include <iostream>
 #include <algorithm>
 #include <glm/gtx/string_cast.hpp>
 
-#define PI 3.14159265
+#define PI 3.14159265f
 
 #include "StreetMap.h"
 
 using namespace std;
 
-StreetMap::StreetMap(enum roadPattern pattern, vector<glm::vec2> populationCenters, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints) {
-    srand (time(NULL));
-    
+StreetMap::StreetMap(RoadPattern pattern, vector<glm::vec2> populationCenters, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints) {
     int index = 0;
     int i;
     int j;
-    int size = populationCenters.size();
-    int centerRadius = 10.0f;
+    size_t size = populationCenters.size();
+    float centerRadius = 10.0f;
 
     switch(pattern) {
         case ROAD_BASIC: {

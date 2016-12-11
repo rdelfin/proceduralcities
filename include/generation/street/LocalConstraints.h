@@ -8,15 +8,23 @@
 #include <generation/street/LocalConstraints.h>
 #include <generation/street/Attributes.h>
 
+#include <map>
+#include <set>
+
 class LocalConstraints {
 public:
-    LocalConstraints();
+    LocalConstraints(std::map<float, std::set<float>> waterPoints, std::map<float, std::set<float>> parksPoints);
 
     void operator()(const RoadAttribute& roadAttributes, RoadAttribute& newRoadAttributes, StateAttribute& newState);
     void getAttributes(const RoadAttribute& roadAttributes, RoadAttribute& newRoadAttributes, StateAttribute& newState);
 
     ~LocalConstraints();
 private:
+    bool collidesWithEnvironment(glm::vec2);
+    std::map<float, std::set<float>> waterPoints;
+    std::map<float, std::set<float>> parksPoints;
+
+    float minLength, maxDeltaAngle;
 };
 
 
