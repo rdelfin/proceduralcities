@@ -14,12 +14,12 @@
 class Module {
 public:
     Module();
+    Module(const Module&);
 
     void addAttribute(Attribute*);
 
     virtual ~Module();
 
-protected:
     std::vector<Attribute*> attributes;
 };
 
@@ -27,6 +27,7 @@ protected:
 class RoadModule : public Module {
 public:
     RoadModule(DelayAttribute* delayAttribute, RuleAttribute* ruleAttribute);
+    RoadModule(const RoadModule& mod) : Module(mod) { }
 
     const DelayAttribute* getDelayAttribute();
     const RuleAttribute* getRuleAttribute();
@@ -38,6 +39,7 @@ private:
 class InquiryModule : public Module {
 public:
     InquiryModule(RoadAttribute* roadAttribute, StateAttribute* stateAttribute);
+    InquiryModule(const InquiryModule& mod) : Module(mod) { }
 
     const RoadAttribute* getRoadAttribute();
     const StateAttribute* getStateAttribute();
@@ -49,6 +51,7 @@ private:
 class BranchModule : public Module {
 public:
     BranchModule(DelayAttribute* delayAttribute, RuleAttribute* ruleAttribute, RoadAttribute* roadAttribute);
+    BranchModule(const BranchModule& mod) : Module(mod) { }
 
     const DelayAttribute* getDelayAttribute();
     const RuleAttribute* getRuleAttribute();
@@ -60,6 +63,7 @@ public:
 class DrawnRoadModule : public  Module {
 public:
     DrawnRoadModule(RoadAttribute* roadAttribute);
+    DrawnRoadModule(const DrawnRoadModule& mod) : Module(mod) { }
 
     const RoadAttribute* getRoadAttribute();
 
@@ -69,6 +73,7 @@ public:
 class TerminationModule : public Module {
 public:
     TerminationModule() { }
+    TerminationModule(const TerminationModule& mod) : Module(mod) { }
     virtual ~TerminationModule() { }
 private:
 };
@@ -76,12 +81,14 @@ private:
 class StartModule : public Module {
 public:
     StartModule() { }
+    StartModule(const StartModule& mod) : Module(mod) {  }
     virtual ~StartModule() { }
 };
 
 class EndModule : public Module {
 public:
     EndModule() { }
+    EndModule(const EndModule& mod) : Module(mod) { }
     virtual ~EndModule() { }
 };
 

@@ -6,12 +6,14 @@
 
 #include <generation/street/Modules.h>
 
+#include <vector>
+
 
 Parser::Parser(const GlobalGoals& globalGoals, const LocalConstraints& localConstraints)
     : globalGoals(globalGoals), localConstraints(localConstraints) {
     // Initialize using axiom (omega)
     DelayAttribute* delayAttribute = new DelayAttribute(0);
-    RoadAttribute* roadAttribute = new RoadAttribute(0, 0); // TODO wtf do I put here
+    RoadAttribute* roadAttribute = new RoadAttribute(1, 0, glm::vec2(0, 0)); // TODO wtf do I put here
     RuleAttribute* ruleAttribute = new RuleAttribute;
     StateAttribute* stateAttribute = new StateAttribute(STATE_UNASSIGNED);
 
@@ -105,7 +107,7 @@ std::vector<Module*> Parser::parse() {
                 dynamic_cast<InquiryModule*>(modules[i])->getStateAttribute()->state == STATE_UNASSIGNED) {
             InquiryModule* im = dynamic_cast<InquiryModule*>(modules[i]);
             const RoadAttribute* oldRoadAttr = im->getRoadAttribute();
-            RoadAttribute newRoadAttr(0, 0);
+            RoadAttribute newRoadAttr(0, 0, glm::vec2(0, 0));
             StateAttribute newStateAttr(STATE_UNASSIGNED);
 
             localConstraints(*oldRoadAttr, newRoadAttr, newStateAttr);
@@ -130,6 +132,12 @@ std::vector<Module*> Parser::parse() {
                 newModules.push_back(new BranchModule(*(BranchModule*)modules[i]));
             if(dynamic_cast<TerminationModule*>(modules[i]))
                 newModules.push_back(new TerminationModule(*(TerminationModule*)modules[i]));
+            if(dynamic_cast<StartModule*>(modules[i]))
+                newModules.push_back(new StartModule(*(StartModule*)modules[i]));
+            if(dynamic_cast<EndModule*>(modules[i]))
+                newModules.push_back(new EndModule(*(EndModule*)modules[i]));
+            if(dynamic_cast<DrawnRoadModule*>(modules[i]))
+                newModules.push_back(new DrawnRoadModule(*(DrawnRoadModule*)modules[i]));
         }
     }
 
@@ -144,6 +152,6 @@ std::vector<Module*> Parser::parse() {
 
 Parser::~Parser() {
     for(Module* module : modules) {
-        delete module;
+        //delete module;
     }
 }

@@ -10,13 +10,13 @@
 #include <generation/street/LocalConstraints.h>
 
 class Parser {
-private:
+public:
     Parser(const GlobalGoals& globalGoals, const LocalConstraints& localConstraints);
 
     std::vector<Module*> parse();
 
     ~Parser();
-public:
+private:
     std::vector<Module*> modules;
     GlobalGoals globalGoals;
     LocalConstraints localConstraints;

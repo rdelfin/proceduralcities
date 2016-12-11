@@ -5,6 +5,8 @@
 #ifndef PROCEDURALCITIES_ATTRIBUTES_H
 #define PROCEDURALCITIES_ATTRIBUTES_H
 
+#include <glm/glm.hpp>
+
 enum {
     STATE_UNASSIGNED,
     STATE_SUCCEEDED,
@@ -17,9 +19,10 @@ struct Attribute {
 };
 
 struct RoadAttribute : public Attribute {
-    RoadAttribute(float length, float angle) : length(length), angle(angle) { }
+    RoadAttribute(float length, float angle, glm::vec2 start) : length(length), angle(angle), start(start) { }
     float length;
     float angle; // In radians
+    glm::vec2 start;
 
     virtual ~RoadAttribute() { }
 };
