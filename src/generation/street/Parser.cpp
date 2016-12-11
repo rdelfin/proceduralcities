@@ -16,7 +16,8 @@ Parser::Parser(const GlobalGoals& globalGoals, const LocalConstraints& localCons
     // Initialize using axiom (omega)
     DelayAttribute* delayAttribute = new DelayAttribute(0);
     RoadAttribute* roadAttribute = new RoadAttribute(5, (rand() % 180 + 1) * PI/180.0f, glm::vec2(0, 0)); // TODO wtf do I put here
-    RuleAttribute* ruleAttribute = new RectangleRuleAttribute(roadAttribute->angle, 5, 10); // TODO: Pass in through constructor
+    RuleAttribute* ruleAttribute = new RectangleRuleAttribute(roadAttribute->angle, 15, 30); // TODO: Pass in through constructor
+
     StateAttribute* stateAttribute = new StateAttribute(STATE_UNASSIGNED);
 
     modules.push_back(new RoadModule(delayAttribute, ruleAttribute));

@@ -55,8 +55,8 @@ void GlobalGoals::getAttribs(const RoadAttribute* roadAttribute, const RuleAttri
         float parallelLength = wideStreet ? rectRuleAttr->height : rectRuleAttr->width;
 
         pRoadAttr.push_back(new RoadAttribute(roadLength, constrainAngle(roadAttribute->angle), roadEnd));
-        pRoadAttr.push_back(new RoadAttribute(parallelLength, constrainAngle(roadAttribute->angle + 90), roadEnd));
-        pRoadAttr.push_back(new RoadAttribute(parallelLength, constrainAngle(roadAttribute->angle - 90), roadEnd));
+        pRoadAttr.push_back(new RoadAttribute(parallelLength, constrainAngle(roadAttribute->angle + PI/2), roadEnd));
+        pRoadAttr.push_back(new RoadAttribute(parallelLength, constrainAngle(roadAttribute->angle - PI/2), roadEnd));
     }
 }
 

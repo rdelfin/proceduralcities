@@ -25,7 +25,7 @@
 #include <StreetMap.h>
 #include <generation/street/Parser.h>
 
-#define PARSE_LEVEL 13
+#define PARSE_LEVEL 20
 
 using namespace std;
 
@@ -140,15 +140,18 @@ int main() {
     LocalConstraints localConstraints(area.waterPoints, area.parksPoints);
     Parser parser(globalGoals, localConstraints);
 
+    std::cerr << "BEGINNING PARSE..." << std::endl;
+
     // Parse 10 times
     for(int i = 0; i < PARSE_LEVEL; i++) {
+        std::cerr << "\tlevel " << i << std::endl;
         parser.substitution();
     }
 
     std::vector<StreetSegment> streets = parser.parser();
 
     for(StreetSegment ss : streets) {
-        ss.addLines(streetVertices, streetFaces, glm::vec3(0.0f, 1.0f, 0.0f), 1.0f);
+        ss.addLines(streetVertices, streetFaces, glm::vec3(0.0f, 1.0f, 0.0f), 0.5f);
     }
 
     for(auto i = 0; i < streetVertices.size(); i++) {
