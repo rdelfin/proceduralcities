@@ -30,18 +30,18 @@ void LocalConstraints::getAttributes(const RoadAttribute& roadAttributes, RoadAt
         newRoadAttributes.length = roadAttributes.length - lengthDelta;
         newRoadAttributes.angle = roadAttributes.angle + angleDelta;
 
-        streetFound = collidesWithEnvironment(newRoadAttributes.end());
+        streetFound = !collidesWithEnvironment(newRoadAttributes.start, newRoadAttributes.end());
         if(streetFound) break;
 
         newRoadAttributes.angle = roadAttributes.angle - angleDelta;
-        streetFound = collidesWithEnvironment(newRoadAttributes.end());
+        streetFound = !collidesWithEnvironment(newRoadAttributes.start, newRoadAttributes.end());
 
         lengthDelta += 0.1f;
         if(roadAttributes.length - lengthDelta < minLength) {
-            lengthDelta = 0.0f;
-            angleDelta += 0.01f;
-
-            if(angleDelta > maxDeltaAngle)
+//            lengthDelta = 0.0f;
+//            angleDelta += 0.01f;
+//
+//            if(angleDelta > maxDeltaAngle)
                 break;
         }
     }
@@ -49,20 +49,20 @@ void LocalConstraints::getAttributes(const RoadAttribute& roadAttributes, RoadAt
     newState = streetFound ? STATE_SUCCEEDED : STATE_FAILED;
 }
 
-bool LocalConstraints::collidesWithEnvironment(glm::vec2 point) {
-    float x = (float) round(point.x);
-    float z = (float) round(point.y);
-    if (waterPoints.count(x) != 0 && waterPoints[x].count(z) != 0) {
-        return false;
-    }
-    else if (parksPoints.count(x) != 0 && parksPoints[x].count(z) != 0) {
-        return false;
-    }
-    else if (x <= -100.0f || x >= 100.0f || z <= -100.0f || z >= 100.0f) {
-        return false;
-    }
+bool LocalConstraints::collidesWithEnvironment(glm::vec2 start, glm::vec2 end) {
+    for(float i = 0; i <= 1.0f; i += 0.01f) {
+        glm::vec2 point = start + i*(end - start);
 
-    return true;
+        float x = (float) round(point.x);
+        float z = (float) round(point.y);
+        if (waterPoints.count(x) != 0 && waterPoints[x].count(z) != 0) {
+            return true;
+        } else if (parksPoints.count(x) != 0 && parksPoints[x].count(z) != 0) {
+            return true;
+        } else if (x <= -100.0f || x >= 100.0f || z <= -100.0f || z >= 100.0f) {
+            return true;
+       }
+    }
 }
 
 LocalConstraints::~LocalConstraints() {

@@ -20,7 +20,7 @@ public:
 
     ~LocalConstraints();
 private:
-    bool collidesWithEnvironment(glm::vec2);
+    bool collidesWithEnvironment(glm::vec2 start, glm::vec2 end);
     std::map<float, std::set<float>> waterPoints;
     std::map<float, std::set<float>> parksPoints;
 

@@ -15,11 +15,11 @@ class GlobalGoals {
 public:
     GlobalGoals();
 
-    void getAttribs(const RoadAttribute*, const RuleAttribute*,
-                    std::vector<DelayAttribute*>& pDel, std::vector<RuleAttribute*>& pRuleAttr, std::vector<RoadAttribute*>& pRoadAttr);
+    void getAttribs(const RoadAttribute&, const RuleAttribute&,
+                    std::vector<DelayAttribute>& pDel, std::vector<RuleAttribute>& pRuleAttr, std::vector<RoadAttribute>& pRoadAttr);
 
-    void operator()(const RoadAttribute*, const RuleAttribute*,
-                    std::vector<DelayAttribute*>& pDel, std::vector<RuleAttribute*>& pRuleAttr, std::vector<RoadAttribute*>& pRoadAttr);
+    void operator()(const RoadAttribute&, const RuleAttribute&,
+                    std::vector<DelayAttribute>& pDel, std::vector<RuleAttribute>& pRuleAttr, std::vector<RoadAttribute>& pRoadAttr);
 
     ~GlobalGoals();
 private:

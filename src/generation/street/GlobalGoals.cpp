@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include <StreetMap.h>
+#include <iostream>
 
 #define PI 3.14159265f
 
@@ -28,35 +29,40 @@ GlobalGoals::GlobalGoals() {
 
 }
 
-void GlobalGoals::operator()(const RoadAttribute* roadAttribute, const RuleAttribute* ruleAttribute,
-                std::vector<DelayAttribute*>& pDel, std::vector<RuleAttribute*>& pRuleAttr, std::vector<RoadAttribute*>& pRoadAttr) {
+void GlobalGoals::operator()(const RoadAttribute& roadAttribute, const RuleAttribute& ruleAttribute,
+                std::vector<DelayAttribute>& pDel, std::vector<RuleAttribute>& pRuleAttr, std::vector<RoadAttribute>& pRoadAttr) {
     getAttribs(roadAttribute, ruleAttribute, pDel, pRuleAttr, pRoadAttr);
 }
 
-void GlobalGoals::getAttribs(const RoadAttribute* roadAttribute, const RuleAttribute* ruleAttribute,
-                std::vector<DelayAttribute*>& pDel, std::vector<RuleAttribute*>& pRuleAttr, std::vector<RoadAttribute*>& pRoadAttr) {
-    if(dynamic_cast<const RectangleRuleAttribute*>(ruleAttribute)) {
-        glm::vec2 roadEnd = roadAttribute->end();
+void GlobalGoals::getAttribs(const RoadAttribute& roadAttribute, const RuleAttribute& ruleAttribute,
+                std::vector<DelayAttribute>& pDel, std::vector<RuleAttribute>& pRuleAttr, std::vector<RoadAttribute>& pRoadAttr) {
+    if(ruleAttribute.pattern == ROAD_RECTANGULAR) {
+        glm::vec2 roadEnd = roadAttribute.end();
 
-        const RectangleRuleAttribute* rectRuleAttr = dynamic_cast<const RectangleRuleAttribute*>(ruleAttribute);
+        float widthAngleDiff = min(abs(angleDiff(roadAttribute.angle, ruleAttribute.initialAngle)),
+                                   abs(angleDiff(roadAttribute.angle, constrainAngle(ruleAttribute.initialAngle + PI))));
 
-        pDel.push_back(new DelayAttribute(1));
-        pDel.push_back(new DelayAttribute(1));
-        pDel.push_back(new DelayAttribute(1));
-        pRuleAttr.push_back((RuleAttribute*)rectRuleAttr->copy());
-        pRuleAttr.push_back((RuleAttribute*)rectRuleAttr->copy());
-        pRuleAttr.push_back((RuleAttribute*)rectRuleAttr->copy());
+        if(widthAngleDiff != 0) {
+            //std::cout << "OH SHIT IT'S " << widthAngleDiff << std::endl;
+        }
 
-        float widthAngleDiff = min(abs(angleDiff(roadAttribute->angle, rectRuleAttr->initialAngle)),
-                                   abs(angleDiff(roadAttribute->angle, constrainAngle(rectRuleAttr->initialAngle + 90))));
+
+        bool isGridStreet = (widthAngleDiff < 0.1 || abs(widthAngleDiff - PI/2) < 0.1);
+
+        pDel.push_back(isGridStreet ? DelayAttribute(1) : DelayAttribute(-1));
+        pDel.push_back(isGridStreet ? DelayAttribute(1) : DelayAttribute(-1));
+        pDel.push_back(isGridStreet ? DelayAttribute(1) : DelayAttribute(-1));
+        pRuleAttr.push_back(ruleAttribute);
+        pRuleAttr.push_back(ruleAttribute);
+        pRuleAttr.push_back(ruleAttribute);
 
         bool wideStreet = widthAngleDiff < 45;
-        float roadLength = wideStreet ? rectRuleAttr->width : rectRuleAttr->height;
-        float parallelLength = wideStreet ? rectRuleAttr->height : rectRuleAttr->width;
+        float roadLength = wideStreet ? ruleAttribute.width : ruleAttribute.height;
+        float parallelLength = wideStreet ? ruleAttribute.height : ruleAttribute.width;
 
-        pRoadAttr.push_back(new RoadAttribute(roadLength, constrainAngle(roadAttribute->angle), roadEnd));
-        pRoadAttr.push_back(new RoadAttribute(parallelLength, constrainAngle(roadAttribute->angle + 90), roadEnd));
-        pRoadAttr.push_back(new RoadAttribute(parallelLength, constrainAngle(roadAttribute->angle - 90), roadEnd));
+        pRoadAttr.push_back(RoadAttribute(roadLength, constrainAngle(roadAttribute.angle), roadEnd));
+        pRoadAttr.push_back(RoadAttribute(parallelLength, constrainAngle(roadAttribute.angle + PI/2), roadEnd));
+        pRoadAttr.push_back(RoadAttribute(parallelLength, constrainAngle(roadAttribute.angle - PI/2), roadEnd));
     }
 }
 
