@@ -1,6 +1,6 @@
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
+#include <cstdlib>
+#include <ctime>
+#include <cmath>
 #include <iostream>
 #include <algorithm>
 #include <glm/gtx/string_cast.hpp>
@@ -11,9 +11,7 @@
 
 using namespace std;
 
-StreetMap::StreetMap(enum roadPattern pattern, vector<glm::vec2> populationCenters, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints) {
-    srand (time(NULL));
-    
+StreetMap::StreetMap(RoadPattern pattern, vector<glm::vec2> populationCenters, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints) {
     int index = 0;
     int i;
     int j;

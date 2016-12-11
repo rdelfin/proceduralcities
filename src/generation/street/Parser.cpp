@@ -8,13 +8,14 @@
 
 #include <vector>
 
+#define PI 3.14159265f
 
 Parser::Parser(const GlobalGoals& globalGoals, const LocalConstraints& localConstraints)
     : globalGoals(globalGoals), localConstraints(localConstraints) {
     // Initialize using axiom (omega)
     DelayAttribute* delayAttribute = new DelayAttribute(0);
     RoadAttribute* roadAttribute = new RoadAttribute(1, 0, glm::vec2(0, 0)); // TODO wtf do I put here
-    RuleAttribute* ruleAttribute = new RuleAttribute;
+    RuleAttribute* ruleAttribute = new RectangleRuleAttribute((rand() % 180 + 1) * PI/180.0f, 5, 10); // TODO: Pass in through constructor
     StateAttribute* stateAttribute = new StateAttribute(STATE_UNASSIGNED);
 
     modules.push_back(new RoadModule(delayAttribute, ruleAttribute));
@@ -37,25 +38,25 @@ std::vector<Module*> Parser::substitution() {
                 dynamic_cast<InquiryModule*>(modules[i + 1])->getStateAttribute()->state == STATE_SUCCEEDED) {
             RoadModule* rm = dynamic_cast<RoadModule*>(modules[i]);
             InquiryModule* im = dynamic_cast<InquiryModule*>(modules[i + 1]);
-            std::vector<DelayAttribute> delayAttr;
-            std::vector<RuleAttribute> ruleAttr;
-            std::vector<RoadAttribute> roadAttr;
+            std::vector<DelayAttribute*> delayAttr;
+            std::vector<RuleAttribute*> ruleAttr;
+            std::vector<RoadAttribute*> roadAttr;
 
 
-            globalGoals(*im->getRoadAttribute(), *rm->getRuleAttribute(),  delayAttr, ruleAttr, roadAttr);
+            globalGoals.getAttribs(im->getRoadAttribute(), rm->getRuleAttribute(),  delayAttr, ruleAttr, roadAttr);
 
             // Equivalent to +() and F()
             newModules.push_back( new DrawnRoadModule( new RoadAttribute(*im->getRoadAttribute()) ) );
 
-            newModules.push_back(new BranchModule(new DelayAttribute(delayAttr[1]),
-                                               new RuleAttribute(ruleAttr[1]),
-                                               new RoadAttribute(roadAttr[1])));
-            newModules.push_back(new BranchModule(new DelayAttribute(delayAttr[2]),
-                                               new RuleAttribute(ruleAttr[2]),
-                                               new RoadAttribute(roadAttr[2])));
-            newModules.push_back(new RoadModule(new DelayAttribute(delayAttr[2]),
-                                             new RuleAttribute(ruleAttr[2])));
-            newModules.push_back(new InquiryModule(new RoadAttribute(roadAttr[0]), new StateAttribute(STATE_UNASSIGNED)));
+            newModules.push_back(new BranchModule((DelayAttribute*)delayAttr[1],
+                                                  (RuleAttribute*)ruleAttr[1],
+                                                  (RoadAttribute*)roadAttr[1]));
+            newModules.push_back(new BranchModule((DelayAttribute*)delayAttr[2],
+                                                  (RuleAttribute*)ruleAttr[2],
+                                                  (RoadAttribute*)roadAttr[2]));
+            newModules.push_back(new RoadModule((DelayAttribute*)delayAttr[2],
+                                                (RuleAttribute*)ruleAttr[2]));
+            newModules.push_back(new InquiryModule((RoadAttribute*)roadAttr[0], new StateAttribute(STATE_UNASSIGNED)));
         }
 
         // p3
@@ -70,8 +71,8 @@ std::vector<Module*> Parser::substitution() {
                 dynamic_cast<BranchModule*>(modules[i])->getDelayAttribute()->delay > 0) {
             BranchModule* bm = dynamic_cast<BranchModule*>(modules[i]);
             newModules.push_back( new BranchModule( new DelayAttribute(bm->getDelayAttribute()->delay - 1),
-                                                    new RuleAttribute(*bm->getRuleAttribute()),
-                                                    new RoadAttribute(*bm->getRoadAttribute()) ) );
+                                                    (RuleAttribute*)bm->getRuleAttribute()->copy(),
+                                                    (RoadAttribute*)bm->getRoadAttribute()->copy() ) );
         }
 
         // p5
@@ -80,8 +81,8 @@ std::vector<Module*> Parser::substitution() {
             BranchModule* bm = dynamic_cast<BranchModule*>(modules[i]);
             newModules.push_back( new StartModule );
             newModules.push_back( new RoadModule( new DelayAttribute(bm->getDelayAttribute()->delay),
-                                                  new RuleAttribute(*bm->getRuleAttribute()) ) );
-            newModules.push_back( new InquiryModule( new RoadAttribute(*bm->getRoadAttribute()),
+                                                  (RuleAttribute*)bm->getRuleAttribute()->copy() ) );
+            newModules.push_back( new InquiryModule( (RoadAttribute*)bm->getRoadAttribute()->copy(),
                                                      new StateAttribute(STATE_UNASSIGNED) ) );
             newModules.push_back( new EndModule );
         }
@@ -109,8 +110,8 @@ std::vector<Module*> Parser::substitution() {
 
             localConstraints(*oldRoadAttr, newRoadAttr, newStateAttr);
 
-            newModules.push_back(new InquiryModule(new RoadAttribute(newRoadAttr),
-                                                   new StateAttribute(newStateAttr)));
+            newModules.push_back(new InquiryModule((RoadAttribute*)newRoadAttr.copy(),
+                                                   (StateAttribute*)newStateAttr.copy()));
         }
 
         // p9
@@ -121,18 +122,7 @@ std::vector<Module*> Parser::substitution() {
 
         // No substitution
         else {
-            if(dynamic_cast<InquiryModule*>(modules[i]))
-                newModules.push_back(new InquiryModule(*(InquiryModule*)modules[i]));
-            if(dynamic_cast<RoadModule*>(modules[i]))
-                newModules.push_back(new RoadModule(*(RoadModule*)modules[i]));
-            if(dynamic_cast<BranchModule*>(modules[i]))
-                newModules.push_back(new BranchModule(*(BranchModule*)modules[i]));
-            if(dynamic_cast<StartModule*>(modules[i]))
-                newModules.push_back(new StartModule(*(StartModule*)modules[i]));
-            if(dynamic_cast<EndModule*>(modules[i]))
-                newModules.push_back(new EndModule(*(EndModule*)modules[i]));
-            if(dynamic_cast<DrawnRoadModule*>(modules[i]))
-                newModules.push_back(new DrawnRoadModule(*(DrawnRoadModule*)modules[i]));
+            newModules.push_back(modules[i]->copy());
         }
     }
 

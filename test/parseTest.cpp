@@ -7,7 +7,7 @@
 #include <iostream>
 
 int main() {
-    GlobalGoals globalGoals;
+    GlobalGoals globalGoals(ROAD_RECTANGULAR);
     LocalConstraints localConstraints;
     Parser parser(globalGoals, localConstraints);
 glm::vec2() + glm::vec2();

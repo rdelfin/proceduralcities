@@ -16,6 +16,8 @@ public:
     Module();
     Module(const Module&);
 
+    virtual Module* copy() = 0;
+
     void addAttribute(Attribute*);
 
     virtual ~Module();
@@ -29,6 +31,10 @@ public:
     RoadModule(DelayAttribute* delayAttribute, RuleAttribute* ruleAttribute);
     RoadModule(const RoadModule& mod) : Module(mod) { }
 
+    virtual Module* copy() {
+        return new RoadModule(*this);
+    }
+
     const DelayAttribute* getDelayAttribute();
     const RuleAttribute* getRuleAttribute();
 
@@ -40,6 +46,10 @@ class InquiryModule : public Module {
 public:
     InquiryModule(RoadAttribute* roadAttribute, StateAttribute* stateAttribute);
     InquiryModule(const InquiryModule& mod) : Module(mod) { }
+
+    virtual Module* copy() {
+        return new InquiryModule(*this);
+    }
 
     const RoadAttribute* getRoadAttribute();
     const StateAttribute* getStateAttribute();
@@ -53,6 +63,10 @@ public:
     BranchModule(DelayAttribute* delayAttribute, RuleAttribute* ruleAttribute, RoadAttribute* roadAttribute);
     BranchModule(const BranchModule& mod) : Module(mod) { }
 
+    virtual Module* copy() {
+        return new BranchModule(*this);
+    }
+
     const DelayAttribute* getDelayAttribute();
     const RuleAttribute* getRuleAttribute();
     const RoadAttribute* getRoadAttribute();
@@ -65,6 +79,10 @@ public:
     DrawnRoadModule(RoadAttribute* roadAttribute);
     DrawnRoadModule(const DrawnRoadModule& mod) : Module(mod) { }
 
+    virtual Module* copy() {
+        return new DrawnRoadModule(*this);
+    }
+
     const RoadAttribute* getRoadAttribute();
 
     virtual ~DrawnRoadModule() { }
@@ -74,6 +92,11 @@ class StartModule : public Module {
 public:
     StartModule() { }
     StartModule(const StartModule& mod) : Module(mod) {  }
+
+    virtual Module* copy() {
+        return new StartModule(*this);
+    }
+
     virtual ~StartModule() { }
 };
 
@@ -81,6 +104,11 @@ class EndModule : public Module {
 public:
     EndModule() { }
     EndModule(const EndModule& mod) : Module(mod) { }
+
+    virtual Module* copy() {
+        return new EndModule(*this);
+    }
+
     virtual ~EndModule() { }
 };
 
