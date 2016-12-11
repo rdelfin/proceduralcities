@@ -25,7 +25,7 @@
 #include <StreetMap.h>
 #include <generation/street/Parser.h>
 
-#define PARSE_LEVEL 6
+#define PARSE_LEVEL 30
 
 #include <generation/building/Building.h>
 
@@ -147,7 +147,7 @@ int main() {
 
     // Parse 10 times
     for(int i = 0; i < PARSE_LEVEL; i++) {
-        std::cerr << "\tlevel " << i << std::endl;
+        std::cerr << "\tlevel " << (i+1) << "/" << PARSE_LEVEL << std::endl;
         parser.substitution();
     }
 
