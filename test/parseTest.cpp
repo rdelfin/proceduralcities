@@ -2,8 +2,8 @@
 // Created by rdelfin on 12/10/16.
 //
 
-#include <generation/street/Parser.h>
 #include <generation/street/Modules.h>
+#include <generation/street/Parser.h>
 #include <iostream>
 
 int main() {
@@ -12,7 +12,7 @@ int main() {
     Parser parser(globalGoals, localConstraints);
 glm::vec2() + glm::vec2();
     for(int i = 0; i < 10; i++) {
-        std::vector<Module *> iteration = parser.parse();
+        std::vector<Module *> iteration = parser.substitution();
         std::cout << "Iteration " << i << ": ";
         for (Module *module : iteration) {
             if (dynamic_cast<RoadModule *>(module)) std::cout << "{ROAD MODULE} ";

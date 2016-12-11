@@ -21,7 +21,7 @@ Parser::Parser(const GlobalGoals& globalGoals, const LocalConstraints& localCons
     modules.push_back(new InquiryModule(roadAttribute, stateAttribute));
 }
 
-std::vector<Module*> Parser::parse() {
+std::vector<Module*> Parser::substitution() {
     std::vector<Module*> newModules;
     for(int i = 0; i < (long)modules.size(); i++) {
 
@@ -150,8 +150,25 @@ std::vector<Module*> Parser::parse() {
     return newModules;
 }
 
+
+std::vector<StreetSegment> Parser::parser() {
+    std::vector<StreetSegment> streets;
+
+    for(Module* module : modules) {
+        if(dynamic_cast<DrawnRoadModule*>(module)) {
+            DrawnRoadModule* drawnRoadModule = dynamic_cast<DrawnRoadModule*>(module);
+            const RoadAttribute* attr = drawnRoadModule->getRoadAttribute();
+            std::vector waypoints = { attr->start,
+                                      attr->start + attr->length*glm::vec2(cos(attr->angle), sin(attr->angle)) };
+            streets.push_back(StreetSegment(waypoints, nullptr, nullptr));
+        }
+    }
+
+    return streets;
+}
+
 Parser::~Parser() {
     for(Module* module : modules) {
-        //delete module;
+        delete module;
     }
 }

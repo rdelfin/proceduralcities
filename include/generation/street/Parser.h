@@ -9,11 +9,15 @@
 #include <generation/street/GlobalGoals.h>
 #include <generation/street/LocalConstraints.h>
 
+#include <generation/street/StreetSegment.h>
+
 class Parser {
 public:
     Parser(const GlobalGoals& globalGoals, const LocalConstraints& localConstraints);
 
-    std::vector<Module*> parse();
+    std::vector<Module*> substitution();
+
+    std::vector<StreetSegment> parser();
 
     ~Parser();
 private:
