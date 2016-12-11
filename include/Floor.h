@@ -1,3 +1,6 @@
+#ifndef PROCEDURALCITIES_FLOOR_H
+#define PROCEDURALCITIES_FLOOR_H
+
 #include <string>
 #include <functional>
 #include <vector>
@@ -14,3 +17,5 @@ class Floor {
         vector<glm::vec4> normals;
         vector<glm::uvec3> faces;
 };
+
+#endif // PROCEDURALCITIES_FLOOR_H

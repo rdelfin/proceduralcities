@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <time.h>
+#include <stdlib.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -13,11 +15,14 @@
 #include <GLFW/glfw3.h>
 #include "debuggl.h"
 #include <Area.h>
+#include <AreaLine.h>
 #include <Floor.h>
 #include <Renderable.h>
+#include <LineMesh.h>
 #include <TriangleMesh.h>
 #include <sstream>
 #include <camera.h>
+#include <StreetMap.h>
 
 using namespace std;
 
@@ -43,6 +48,8 @@ ErrorCallback(int error, const char* description)
 
 
 int main() {
+    srand (time(NULL));
+
     std::string window_title = "City Generator";
     if (!glfwInit()) exit(EXIT_FAILURE);
     glfwSetErrorCallback(ErrorCallback);
@@ -79,10 +86,12 @@ int main() {
 
     Shader vertexShader("resources/shaders/default.vert"),
            geometryShader("resources/shaders/default.geom"),
+           linesGeometryShader("resources/shaders/lines.geom"),
            fragmentShader("resources/shaders/default.frag"),
            floorFragmentShader("resources/shaders/floor.frag"),
            waterFragmentShader("resources/shaders/water.frag"),
-           parksFragmentShader("resources/shaders/parks.frag");
+           parksFragmentShader("resources/shaders/parks.frag"),
+           streetFragmentShader("resources/shaders/streets.frag");
 
     auto view_matrix_data_source = []() -> const void* {
         return &camera.getViewMatrix();
@@ -110,13 +119,20 @@ int main() {
 
     camera.zoom(250.0f);
     camera.pitch((180.0f / M_PI) * -420 / window_width);
+    camera.strave(glm::vec3(0, 1, 0));
 
     Floor floor;
     Area area;
+    AreaLine areaLine;
+    int i, j;
+    vector<LineMesh> waterMeshes;
+    vector<LineMesh> parksMeshes;
+    StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
 
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
     TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);
     TriangleMesh parksMesh(area.parksVertices, area.parksNormals, area.parksFaces, vertexShader, geometryShader, parksFragmentShader, uniforms);
+    TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
     //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
 
     while (!glfwWindowShouldClose(window)) {
@@ -134,9 +150,9 @@ int main() {
         glCullFace(GL_BACK);
 
         floorMesh.draw();
+        streetMesh.draw();
         waterMesh.draw();
         parksMesh.draw();
-        //mesh.draw();
 
         // Poll and swap.
         glfwPollEvents();
