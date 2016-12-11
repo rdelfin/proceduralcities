@@ -159,7 +159,7 @@ int main() {
     }
 
 
-    Building building(10.0f, 10.0f, 25.0f);
+    Building building(10.0f, 10.0f, 15.0f);
     building.generateRenderData();
 
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
