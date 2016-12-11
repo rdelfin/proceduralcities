@@ -24,7 +24,7 @@ float angleDiff(float x, float y) {
     return constrainAngle(result);
 }
 
-GlobalGoals::GlobalGoals(RoadPattern pattern) : pattern(pattern) {
+GlobalGoals::GlobalGoals() {
 
 }
 
@@ -35,12 +35,12 @@ void GlobalGoals::operator()(const RoadAttribute* roadAttribute, const RuleAttri
 
 void GlobalGoals::getAttribs(const RoadAttribute* roadAttribute, const RuleAttribute* ruleAttribute,
                 std::vector<DelayAttribute*>& pDel, std::vector<RuleAttribute*>& pRuleAttr, std::vector<RoadAttribute*>& pRoadAttr) {
-    if(dynamic_cast<RectangleRuleAttribute*>(ruleAttribute)) {
+    if(dynamic_cast<const RectangleRuleAttribute*>(ruleAttribute)) {
         glm::vec2 roadEnd = roadAttribute->start +
                             roadAttribute->length * glm::vec2(cos(roadAttribute->angle), sin(roadAttribute->angle));
 
 
-        RectangleRuleAttribute* rectRuleAttr = dynamic_cast<RectangleRuleAttribute*>(ruleAttribute)
+        const RectangleRuleAttribute* rectRuleAttr = dynamic_cast<const RectangleRuleAttribute*>(ruleAttribute);
 
         pDel.push_back(new DelayAttribute(1));
         pDel.push_back(new DelayAttribute(1));

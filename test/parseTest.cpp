@@ -5,10 +5,12 @@
 #include <generation/street/Modules.h>
 #include <generation/street/Parser.h>
 #include <iostream>
+#include <Area.h>
 
 int main() {
-    GlobalGoals globalGoals(ROAD_RECTANGULAR);
-    LocalConstraints localConstraints;
+    Area area;
+    GlobalGoals globalGoals;
+    LocalConstraints localConstraints(area.waterPoints, area.parksPoints);
     Parser parser(globalGoals, localConstraints);
 glm::vec2() + glm::vec2();
     for(int i = 0; i < 10; i++) {

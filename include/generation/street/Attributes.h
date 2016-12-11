@@ -30,6 +30,7 @@ struct RoadAttribute : public Attribute {
     float length;
     float angle; // In radians
     glm::vec2 start;
+    glm::vec2 end() const { return start + length*glm::vec2(cos(angle), sin(angle)); }
 
     virtual ~RoadAttribute() { }
 };

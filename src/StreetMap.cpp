@@ -15,8 +15,8 @@ StreetMap::StreetMap(RoadPattern pattern, vector<glm::vec2> populationCenters, m
     int index = 0;
     int i;
     int j;
-    int size = populationCenters.size();
-    int centerRadius = 10.0f;
+    size_t size = populationCenters.size();
+    float centerRadius = 10.0f;
 
     switch(pattern) {
         case ROAD_BASIC: {

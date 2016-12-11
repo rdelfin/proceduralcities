@@ -13,7 +13,7 @@
 
 class GlobalGoals {
 public:
-    GlobalGoals(RoadPattern);
+    GlobalGoals();
 
     void getAttribs(const RoadAttribute*, const RuleAttribute*,
                     std::vector<DelayAttribute*>& pDel, std::vector<RuleAttribute*>& pRuleAttr, std::vector<RoadAttribute*>& pRoadAttr);
@@ -23,7 +23,6 @@ public:
 
     ~GlobalGoals();
 private:
-    RoadPattern pattern;
     // TODO: Add global goal properties (population map, water map, road type/style, etc.)
 };
 
