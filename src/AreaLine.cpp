@@ -161,7 +161,7 @@ void AreaLine::createLine(Line &line, int i, int j, int type) {
         line.normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
         line.normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
 
-        line.faces.push_back(glm::vec2(line.index++, line.index++));
+        line.faces.push_back(glm::uvec2(line.index++, line.index++));
 
         line.center[0] += 2 * (j - 100);
         line.center[2] += 2 * (i - 100);
