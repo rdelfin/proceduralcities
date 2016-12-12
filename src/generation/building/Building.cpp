@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Building::Building(float w, float l, float centerDistance, glm::vec3 position, float angle, const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader,
+Building::Building(float w, float l, float centerDistance, glm::vec3 position, float angle,
                    const std::vector<ShaderUniform>& uniforms) : viewMatrix(1.0f), position(position), angle(angle) {
     this->w = w;
     this->l = l;
@@ -24,6 +24,11 @@ Building::Building(float w, float l, float centerDistance, glm::vec3 position, f
 
     std::vector<ShaderUniform> newUniforms(uniforms);
     newUniforms.push_back(ShaderUniform("model", BINDER_MATRIX4_F, model_matrix_data_source));
+
+    Shader vertexShader("resources/shaders/default.vert"),
+            geometryShader("resources/shaders/default.geom"),
+            fragmentShader("resources/shaders/buildings.frag");
+
 
     constructorImpl(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, newUniforms);
 }
@@ -57,8 +62,8 @@ void Building::nextIteration() {
         }
     }
 
-    type = 1;
-    height = 30;
+    //type = 1;
+    //height = 30;
 }
 
 void Building::quad(glm::vec4 points[], int a, int b, int c, int d) {

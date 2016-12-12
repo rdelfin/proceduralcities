@@ -19,7 +19,7 @@ enum {
 
 class Building : public TriangleMesh {
 public:
-    Building(float w, float l, float centerDistance, glm::vec3 position, float angle, const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader,
+    Building(float w, float l, float centerDistance, glm::vec3 position, float angle,
              const std::vector<ShaderUniform>& uniforms);
     void nextIteration();
     void generateRenderData();

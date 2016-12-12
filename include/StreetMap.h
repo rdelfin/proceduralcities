@@ -42,6 +42,8 @@ public:
     glm::vec3 centerNormal;
     glm::vec3 centerTangent;
 
+    float angle;
+
 private:
     void calculateExtremes(glm::vec3 point, glm::vec3 centerTangent, glm::vec3 centerNormal, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints,
                            glm::vec4 &bottomleft, glm::vec4 &bottomright, glm::vec4 &topleft, glm::vec4 &topright, float dist);

@@ -28,6 +28,7 @@ StreetMap::StreetMap(RoadPattern pattern, vector<glm::vec2> populationCenters, m
             break;
         }
         case ROAD_RECTANGULAR: {
+
             int angle1 = rand() % 180 + 1;
             int angle2 = angle1 + 180;
             int angle3 = angle1 + 90;
@@ -40,6 +41,8 @@ StreetMap::StreetMap(RoadPattern pattern, vector<glm::vec2> populationCenters, m
             float deltaZ3 = sin(angle3 * PI / 180.0f);
             float deltaX4 = cos(angle4 * PI / 180.0f);
             float deltaZ4 = sin(angle4 * PI / 180.0f);
+
+            this->angle = angle1 * PI / 180.0f;
             
             glm::vec3 point1;
             glm::vec3 point2;

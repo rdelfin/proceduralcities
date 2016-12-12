@@ -171,9 +171,15 @@ int main() {
     //     streetNormals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
     // }
 
+    int max_attribs;
+    glGetIntegerv (GL_MAX_VERTEX_ATTRIBS, &max_attribs);
 
-    Building building(10.0f, 10.0f, 15.0f, glm::vec3(0.0f, -2.0f, 0.0f), 0.0f,
-                      vertexShader, geometryShader, buildingFragmentShader, buildingUniforms);
+    std::cout << "GL_MAX_VERTEX_ATTRIBS: " << max_attribs << std::endl;
+
+
+    Building building1(10.0f, 10.0f, 15.0f, glm::vec3(0.0f, -2.0f, 0.0f), PI - streetMap.angle, buildingUniforms);
+    //Building building2(10.0f, 10.0f, 40.0f, glm::vec3(50.0f, -2.0f, 0.0f), PI - streetMap.angle, buildingUniforms);
+    //Building building3(10.0f, 10.0f, 25.0f, glm::vec3(20.0f, -2.0f, 30.0f), PI - streetMap.angle, buildingUniforms);
 
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
     TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);
@@ -181,7 +187,7 @@ int main() {
     //TriangleMesh buildingsMesh(building.vertices, building.normals, building.faces, vertexShader, geometryShader, buildingFragmentShader, uniforms);
     TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
     //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
-    // TriangleMesh streetMesh(streetVertices, streetNormals, streetFaces, vertexShader, geometryShader, streetFragmentShader, uniforms);
+    //TriangleMesh streetMesh(streetVertices, streetNormals, streetFaces, vertexShader, geometryShader, streetFragmentShader, uniforms);
 
     while (!glfwWindowShouldClose(window)) {
         // Setup some basic window stuff.
@@ -198,10 +204,12 @@ int main() {
         glCullFace(GL_BACK);
 
         floorMesh.draw();
-        streetMesh.draw();
+        //streetMesh.draw();
         waterMesh.draw();
         parksMesh.draw();
-        building.draw();
+        building1.draw();
+        //building2.draw();
+        //building3.draw();
 
         // Poll and swap.
         glfwPollEvents();
