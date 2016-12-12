@@ -31,6 +31,9 @@
 
 using namespace std;
 
+
+#define PI 3.14159265f
+
 void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, std::vector<glm::vec4>& normals);
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
@@ -124,6 +127,10 @@ int main() {
                                             ShaderUniform("view", BINDER_MATRIX4_F, view_matrix_data_source),
                                             ShaderUniform("camera_position", BINDER_VECTOR3_F, camera_data_source) };
 
+    std::vector<ShaderUniform> buildingUniforms = { ShaderUniform("projection", BINDER_MATRIX4_F, proj_matrix_data_source),
+                                                    ShaderUniform("view", BINDER_MATRIX4_F, view_matrix_data_source),
+                                                    ShaderUniform("camera_position", BINDER_VECTOR3_F, camera_data_source) };
+
     camera.zoom(280.0f);
     camera.pitch((180.0f / M_PI) * -420 / window_width);
     camera.strave(glm::vec3(0, 1, 0));
@@ -165,7 +172,8 @@ int main() {
     // }
 
 
-    Building building(10.0f, 10.0f, 15.0f, vertexShader, geometryShader, buildingFragmentShader, uniforms);
+    Building building(10.0f, 10.0f, 15.0f, glm::vec3(0.0f, -2.0f, 0.0f), 0.0f,
+                      vertexShader, geometryShader, buildingFragmentShader, buildingUniforms);
 
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
     TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);

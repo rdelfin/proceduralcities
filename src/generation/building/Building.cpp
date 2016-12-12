@@ -2,11 +2,12 @@
 #include <iostream>
 
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtx/transform.hpp>
 
 using namespace std;
 
-Building::Building(float w, float l, float centerDistance, const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader,
-                   const std::vector<ShaderUniform>& uniforms) {
+Building::Building(float w, float l, float centerDistance, glm::vec3 position, float angle, const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader,
+                   const std::vector<ShaderUniform>& uniforms) : viewMatrix(1.0f), position(position), angle(angle) {
     this->w = w;
     this->l = l;
     this->centerDistance = centerDistance;
@@ -15,7 +16,16 @@ Building::Building(float w, float l, float centerDistance, const Shader& vertexS
     nextIteration();
     generateRenderData();
 
-    constructorImpl(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
+    auto model_matrix_data_source = [this]() -> const void* {
+        return &this->viewMatrix;
+    };
+
+    viewMatrix = glm::translate(position) * glm::rotate(angle, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    std::vector<ShaderUniform> newUniforms(uniforms);
+    newUniforms.push_back(ShaderUniform("model", BINDER_MATRIX4_F, model_matrix_data_source));
+
+    constructorImpl(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, newUniforms);
 }
 
 void Building::nextIteration() {
