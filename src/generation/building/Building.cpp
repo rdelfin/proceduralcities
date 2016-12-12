@@ -1,8 +1,11 @@
 #include <generation/building/Building.h>
 #include <iostream>
+#include <math.h>
 
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/transform.hpp>
+
+#define PI 3.14159265f
 
 using namespace std;
 
@@ -16,6 +19,8 @@ Building::Building(float w, float l, float centerDistance, glm::vec3 position, f
     nextIteration();
     generateRenderData();
 
+    int random = rand() % 3;
+    angle += random * PI / 2;
     viewMatrix = glm::translate(position) * glm::rotate(angle, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::scale(glm::vec3(0.1f, 0.25f, 0.1f));
     dirty = true;
 }
@@ -59,9 +64,6 @@ void Building::nextIteration() {
             break;
         }
     }
-
-    //type = 1;
-    //height = 30;
 }
 
 void Building::quad(glm::vec4 points[], int a, int b, int c, int d) {
@@ -526,25 +528,25 @@ void Building::generateRenderData() {
     switch (type) {
         // Rectangular building
         case 1: {
-            drawPrism(-3.0f, 0, -3.0f, 3.0f, height * FLOOR_HEIGHT, 3.0f);
+            drawPrism(-10.0f, 0.0f, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
 
             break;
         }
             // U-Shaped building
         case 2: {
-            drawU(-10.0f, 0, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
+            drawU(-10.0f, 0.0f, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
 
             break;
         }
             // Pointy building
         case 3: {
-            drawPrism(-10.0f, 0, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
+            drawPrism(-10.0f, 0.0f, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
             drawPyramid(-10.0f, -10.0f, 10.0f, 10.0f);
             break;
         }
             // L building
         case 4: {
-            drawL(-10.0f, 0, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
+            drawL(-10.0f, 0.0f, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
             break;
         }
             // Rectangular and L combination
@@ -552,13 +554,13 @@ void Building::generateRenderData() {
             float percentage = ((rand() % 21) + 60) / 100.0f;
             float h1 = height * percentage;
             float h2 = height;
-            drawPrism(-10.0f, 0, -10.0f, 10.0f, h1 * FLOOR_HEIGHT, 10.0f);
+            drawPrism(-10.0f, 0.0f, -10.0f, 10.0f, h1 * FLOOR_HEIGHT, 10.0f);
             drawL(-10.0f, h1 * FLOOR_HEIGHT, -10.0f, 10.0f, h2 * FLOOR_HEIGHT, 10.0f);
             break;
         }
             // Pointy tower
         case 6: {
-            drawPrism(-10.0f, 0, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
+            drawPrism(-10.0f, 0.0f, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
             drawPointyTower(-10.0f, -10.0f, 10.0f, 10.0f);
             break;
         }
