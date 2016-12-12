@@ -7,6 +7,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <StreetMap.h>
 
 class Intersection;
 
@@ -18,6 +19,8 @@ public:
     glm::vec3 get(float val);
 
     void addLines(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, glm::vec3 up, float width);
+
+    StreetLine toStreetLine(float y) { return StreetLine(waypoints[0], waypoints[waypoints.size() - 1]); }
 
     ~StreetSegment();
 private:

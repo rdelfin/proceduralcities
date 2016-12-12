@@ -26,6 +26,7 @@
 #include <generation/street/Parser.h>
 
 #define PARSE_LEVEL 10
+#define USE_LSYSTEM 1
 
 #include <generation/building/Building.h>
 
@@ -294,41 +295,37 @@ int main() {
     int i, j;
     //vector<LineMesh> waterMeshes;
     //vector<LineMesh> parksMeshes;
+#if !USE_LSYSTEM
     StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
-    for (i = 0; i < 20; i++) {
+    for (i = 0; i < PARSE_LEVEL; i++) {
         streetMap.nextIteration(area.waterPoints, area.parksPoints);
     }
+#else
+     std::vector<glm::vec4> streetVertices, streetNormals;
+     std::vector<glm::uvec3> streetFaces;
 
-    // std::vector<glm::vec4> streetVertices, streetNormals;
-    // std::vector<glm::uvec3> streetFaces;
+     GlobalGoals globalGoals;
+     LocalConstraints localConstraints(area.waterPoints, area.parksPoints);
+     Parser parser(globalGoals, localConstraints);
 
-    // GlobalGoals globalGoals;
-    // LocalConstraints localConstraints(area.waterPoints, area.parksPoints);
-    // Parser parser(globalGoals, localConstraints);
+     std::cerr << "BEGINNING PARSE..." << std::endl;
 
-    // std::cerr << "BEGINNING PARSE..." << std::endl;
+     // Parse 10 times
+     for(int i = 0; i < PARSE_LEVEL; i++) {
+         std::cerr << "\tlevel " << i << std::endl;
+         parser.substitution();
+     }
 
-    // // Parse 10 times
-    // for(int i = 0; i < PARSE_LEVEL; i++) {
-    //     std::cerr << "\tlevel " << i << std::endl;
-    //     parser.substitution();
-    // }
+     std::vector<StreetSegment> streets = parser.parser();
 
-    // std::vector<StreetSegment> streets = parser.parser();
+     for(StreetSegment ss : streets) {
+         ss.addLines(streetVertices, streetFaces, glm::vec3(0.0f, 1.0f, 0.0f), 0.5f);
+     }
 
-    // for(StreetSegment ss : streets) {
-    //     ss.addLines(streetVertices, streetFaces, glm::vec3(0.0f, 1.0f, 0.0f), 0.5f);
-    // }
-
-    // for(auto i = 0; i < streetVertices.size(); i++) {
-    //     streetNormals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
-    // }
-
-    int max_attribs;
-    glGetIntegerv (GL_MAX_VERTEX_ATTRIBS, &max_attribs);
-
-    std::cout << "GL_MAX_VERTEX_ATTRIBS: " << max_attribs << std::endl;
-
+     for(auto i = 0; i < streetVertices.size(); i++) {
+         streetNormals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+     }
+#endif
 
     std::vector<glm::vec4> buildingVert, buildingNormals;
     std::vector<glm::uvec3> buildingFaces;
@@ -342,8 +339,15 @@ int main() {
     bool created;
 
     std::vector<StreetLine> lines;
+
+#if USE_LSYSTEM
+    for(auto it = streets.begin(); it != streets.end(); ++it) {
+        lines.push_back(it->toStreetLine());
+    }
+#else
     lines.insert(lines.end(), streetMap.streetsInAngle1.begin(), streetMap.streetsInAngle1.end());
     lines.insert(lines.end(), streetMap.streetsInAngle2.begin(), streetMap.streetsInAngle2.end());
+#endif
 
 
     for (i = 0; i < 50; i++) {
