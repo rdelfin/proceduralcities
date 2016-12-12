@@ -35,6 +35,8 @@ using namespace std;
 #define PI 3.14159265f
 
 void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, std::vector<glm::vec4>& normals);
+void append_mesh_data(std::vector<glm::vec4>& verticesTotal, std::vector<glm::vec4>& normalsTotal, std::vector<glm::uvec3>& facesTotal,
+                      const std::vector<glm::vec4>& verticesNew, const std::vector<glm::vec4>& normalsnew, const std::vector<glm::uvec3>& facesNew);
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 void MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y);
@@ -177,14 +179,27 @@ int main() {
     std::cout << "GL_MAX_VERTEX_ATTRIBS: " << max_attribs << std::endl;
 
 
-    Building building1(10.0f, 10.0f, 15.0f, glm::vec3(0.0f, -2.0f, 0.0f), PI - streetMap.angle, buildingUniforms);
-    //Building building2(10.0f, 10.0f, 40.0f, glm::vec3(50.0f, -2.0f, 0.0f), PI - streetMap.angle, buildingUniforms);
-    //Building building3(10.0f, 10.0f, 25.0f, glm::vec3(20.0f, -2.0f, 30.0f), PI - streetMap.angle, buildingUniforms);
+    std::vector<glm::vec4> buildingVert, buildingNormals;
+    std::vector<glm::uvec3> buildingFaces;
+
+    std::vector<Building> buildings = {
+            Building(10.0f, 10.0f, 15.0f, glm::vec3(0.0f, -2.0f, 0.0f), PI - streetMap.angle),
+            Building(10.0f, 10.0f, 15.0f, glm::vec3(20.0f, -2.0f, 0.0f), PI - streetMap.angle),
+            Building(10.0f, 10.0f, 15.0f, glm::vec3(20.0f, -2.0f, 50.0f), PI - streetMap.angle)
+    };
+
+
+    for(auto it = buildings.begin(); it != buildings.end(); ++it) {
+        it->update();
+        append_mesh_data(buildingVert, buildingNormals, buildingFaces, it->transformedVertices, it->transformedNormals, it->faces);
+    }
+
+
 
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
     TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);
     TriangleMesh parksMesh(area.parksVertices, area.parksNormals, area.parksFaces, vertexShader, geometryShader, parksFragmentShader, uniforms);
-    //TriangleMesh buildingsMesh(building.vertices, building.normals, building.faces, vertexShader, geometryShader, buildingFragmentShader, uniforms);
+    TriangleMesh buildingsMesh(buildingVert, buildingNormals, buildingFaces, vertexShader, geometryShader, buildingFragmentShader, uniforms);
     TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
     //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
     //TriangleMesh streetMesh(streetVertices, streetNormals, streetFaces, vertexShader, geometryShader, streetFragmentShader, uniforms);
@@ -207,9 +222,7 @@ int main() {
         //streetMesh.draw();
         waterMesh.draw();
         parksMesh.draw();
-        building1.draw();
-        //building2.draw();
-        //building3.draw();
+        buildingsMesh.draw();
 
         // Poll and swap.
         glfwPollEvents();
@@ -348,5 +361,17 @@ void load_teapot(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& face
 
             faces.push_back(glm::uvec3(z - 1, y - 1, x - 1));
         }
+    }
+}
+
+void append_mesh_data(std::vector<glm::vec4>& verticesTotal, std::vector<glm::vec4>& normalsTotal, std::vector<glm::uvec3>& facesTotal,
+                      const std::vector<glm::vec4>& verticesNew, const std::vector<glm::vec4>& normalsNew, const std::vector<glm::uvec3>& facesNew) {
+    size_t startIdx = verticesTotal.size();
+
+    verticesTotal.insert(verticesTotal.end(), verticesNew.begin(), verticesNew.end());
+    normalsTotal.insert(normalsTotal.end(), normalsNew.begin(), normalsNew.end());
+
+    for(auto it = facesNew.begin(); it != facesNew.end(); ++it) {
+        facesTotal.push_back(glm::uvec3(it->x + startIdx, it->y + startIdx, it->z + startIdx));
     }
 }

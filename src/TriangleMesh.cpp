@@ -39,12 +39,13 @@ void TriangleMesh::constructorImpl(const std::vector<glm::vec4> &vertices, const
     CHECK_GL_ERROR(glGenVertexArrays(1, &vao));
     CHECK_GL_ERROR(glBindVertexArray(vao));
 
-    program = Program(uniforms, vertexShader, geometryShader, fragmentShader);
-    GLint programId = program.getProgramId();
-
     // Generate VBO
     vbo.resize(3);
     CHECK_GL_ERROR(glGenBuffers(3, vbo.data()));
+
+
+    program = Program(uniforms, vertexShader, geometryShader, fragmentShader);
+    GLint programId = program.getProgramId();
 
     // Bind vertices
     GLuint verticesPosition = 0;

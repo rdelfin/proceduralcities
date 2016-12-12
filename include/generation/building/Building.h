@@ -17,10 +17,9 @@ enum {
     HOUSE
 } typedef buildingStyle;
 
-class Building : public TriangleMesh {
+class Building {
 public:
-    Building(float w, float l, float centerDistance, glm::vec3 position, float angle,
-             const std::vector<ShaderUniform>& uniforms);
+    Building(float w, float l, float centerDistance, glm::vec3 position, float angle);
     void nextIteration();
     void generateRenderData();
 
@@ -34,6 +33,12 @@ public:
     int type;
 
     glm::mat4 viewMatrix;
+
+    std::vector<glm::vec4> vertices, normals, transformedVertices, transformedNormals;
+    std::vector<glm::uvec3> faces;
+    bool dirty;
+
+    void update();
 
 private:
     void quad(glm::vec4 points[], int a, int b, int c, int d);
