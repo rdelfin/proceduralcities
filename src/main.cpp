@@ -482,8 +482,10 @@ MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y)
 
     if (g_mouse_pressed && g_prev_mouse_pressed) {
         if (g_current_button == GLFW_MOUSE_BUTTON_LEFT && !g_alt_pressed && !g_shift_pressed && !g_ctrl_pressed) {
-            camera.pitch((180.0f / M_PI) * -deltaMouse.y / window_width);
-            camera.yaw((180.0f /  M_PI) * -deltaMouse.x / window_height);
+            float pitchDegrees = (180.0f / M_PI) * -deltaMouse.y / window_width;
+            float yawDegrees = (180.0f /  M_PI) * -deltaMouse.x / window_height;
+            fps ? camera.fpsPitch(pitchDegrees) : camera.pitch(pitchDegrees);
+            fps ? camera.fpsYaw(yawDegrees) : camera.yaw(yawDegrees);
         } else if (g_current_button == GLFW_MOUSE_BUTTON_RIGHT || (g_current_button == GLFW_MOUSE_BUTTON_LEFT && (g_alt_pressed || g_shift_pressed))) {
             camera.zoom(10.0f * deltaMouse.y / window_height);
         } else if (g_current_button == GLFW_MOUSE_BUTTON_MIDDLE || (g_current_button == GLFW_MOUSE_BUTTON_LEFT && g_ctrl_pressed)) {

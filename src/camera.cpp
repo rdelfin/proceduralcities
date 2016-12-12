@@ -19,9 +19,10 @@ Camera::Camera() { }
 
 void Camera::yaw(float dir) {
     // Rotate around up vector (for yaw)
-    rotateMat = glm::rotate(rotation_speed*dir, up_) * rotateMat;
+    eyeRotateMat = glm::rotate(rotation_speed*dir, up_) * eyeRotateMat;
+    centerRotateMat = glm::rotate(rotation_speed*dir, up_) * centerRotateMat;
 
-    glm::vec3 newEye(rotateMat * glm::vec4(eye_, 1));
+    glm::vec3 newEye(eyeRotateMat * glm::vec4(eye_, 1));
     // Generate new look, right and up vectors based on new rotation
     look_ = glm::normalize(center_ - newEye);
     right_ = glm::normalize(glm::cross(look_, up_));
@@ -30,9 +31,10 @@ void Camera::yaw(float dir) {
 
 void Camera::pitch(float dir) {
     // Rotate around right pointing vector (for pitch)
-    rotateMat = glm::rotate(rotation_speed*dir, right_) * rotateMat;
+    eyeRotateMat = glm::rotate(rotation_speed*dir, right_) * eyeRotateMat;
+    centerRotateMat = glm::rotate(rotation_speed*dir, right_) * centerRotateMat;
 
-    glm::vec3 newEye(rotateMat * glm::vec4(eye_, 1));
+    glm::vec3 newEye(eyeRotateMat * glm::vec4(eye_, 1));
     // Generate new look, right and up vectors based on new rotation
     look_ = glm::normalize(center_ - newEye);
     right_ = glm::normalize(glm::cross(look_, up_));
@@ -44,6 +46,22 @@ void Camera::roll(float dir) {
     glm::mat4 rollRotate = glm::rotate(dir*roll_speed, look_);
     right_ = glm::normalize(glm::vec3(rollRotate * glm::vec4(right_, 0.0f)));
     up_ = glm::normalize(glm::vec3(rollRotate * glm::vec4(up_, 0.0f)));
+}
+
+void Camera::fpsPitch(float dir) {
+    glm::mat4 pitchRotate = glm::rotate(dir*roll_speed, right_);
+    right_ = glm::normalize(glm::vec3(pitchRotate * glm::vec4(right_, 0.0f)));
+    look_ = glm::normalize(glm::vec3(pitchRotate * glm::vec4(look_, 0.0f)));
+    up_ = glm::normalize(glm::vec3(pitchRotate * glm::vec4(up_, 0.0f)));
+    centerRotateMat = pitchRotate * centerRotateMat;
+}
+
+void Camera::fpsYaw(float dir) {
+    glm::mat4 yawRotate = glm::rotate(dir*roll_speed, up_);
+    right_ = glm::normalize(glm::vec3(yawRotate * glm::vec4(right_, 0.0f)));
+    look_ = glm::normalize(glm::vec3(yawRotate * glm::vec4(look_, 0.0f)));
+    up_ = glm::normalize(glm::vec3(yawRotate * glm::vec4(up_, 0.0f)));
+    centerRotateMat = yawRotate * centerRotateMat;
 }
 
 
@@ -73,8 +91,8 @@ void Camera::zoom(float dir) {
 
 const glm::mat4& Camera::getViewMatrix()
 {
-    glm::vec3 eye = glm::vec3(eyeTranslateMat * rotateMat * glm::vec4(eye_, 1));
-    glm::vec3 center = glm::vec3(centerTranslateMat * rotateMat * glm::vec4(center_, 1));
+    glm::vec3 eye = glm::vec3(eyeTranslateMat * eyeRotateMat * glm::vec4(eye_, 1));
+    glm::vec3 center = glm::vec3(centerTranslateMat * centerRotateMat * glm::vec4(center_, 1));
 
     viewMatrix = glm::lookAt(eye, center, up_);
 
@@ -83,7 +101,7 @@ const glm::mat4& Camera::getViewMatrix()
 
 
 const glm::vec3& Camera::getCameraPosition() {
-    finalEye = glm::vec3(eyeTranslateMat * rotateMat * glm::vec4(eye_, 1));
+    finalEye = glm::vec3(eyeTranslateMat * eyeRotateMat * glm::vec4(eye_, 1));
     return finalEye;
 }
 

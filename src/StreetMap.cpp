@@ -387,3 +387,51 @@ void StreetMap::nextIteration(map<float, set<float>> waterPoints, map<float, set
         streetsInAngle1.push_back(StreetLine(bottomright, topright));
     }
 }
+
+
+// Altered version of http://pastebin.com/03BigiCn
+bool StreetLine::intersects(glm::vec2 avec, glm::vec2 bvec, glm::vec2 cvec, glm::vec2 dvec, float width) {
+    glm::vec2 ep1(endpoint1.x, endpoint1.z), ep2(endpoint2.x, endpoint2.z);
+    glm::vec2 length = ep2 - ep1;
+    glm::vec2 tangent = (glm::vec2(length.y, -length.x)*(1/sqrt(length.y*length.y + length.x*length.x)))*width;
+    std::vector<glm::vec2> a = {avec, bvec, cvec, dvec};
+    std::vector<glm::vec2> b = {ep1+tangent, ep2+tangent, ep2-tangent, ep1-tangent};
+
+    for(int polyi = 0; polyi < 2; ++polyi)
+    {
+        const std::vector<glm::vec2>& polygon = polyi == 0 ? a : b;
+
+        for(int i1 = 0; i1 < polygon.size(); ++i1)
+        {
+            const int i2 = (i1 + 1) % polygon.size();
+
+            const double normalx = polygon[i2].y - polygon[i1].y;
+            const double normaly = polygon[i2].x - polygon[i1].x;
+
+            double minA = std::numeric_limits<double>::max();
+            double maxA = std::numeric_limits<double>::min();
+            for(int ai = 0; ai < a.size(); ++ai)
+            {
+                const double projected = normalx * a[ai].x +
+                                         normaly * a[ai].y;
+                if( projected < minA ) minA = projected;
+                if( projected > maxA ) maxA = projected;
+            }
+
+            double minB = std::numeric_limits<double>::max();
+            double maxB = std::numeric_limits<double>::min();
+            for(int bi = 0; bi < b.size(); ++bi)
+            {
+                const double projected = normalx * b[bi].x +
+                                         normaly * b[bi].y;
+                if( projected < minB ) minB = projected;
+                if( projected > maxB ) maxB = projected;
+            }
+
+            if( maxA < minB || maxB < minA )
+                return false;
+        }
+    }
+
+    return true;
+}
