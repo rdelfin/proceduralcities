@@ -25,8 +25,12 @@
 #include <StreetMap.h>
 #include <generation/street/Parser.h>
 
+<<<<<<< HEAD
 #define PARSE_LEVEL 10
 #define USE_LSYSTEM 1
+=======
+#define PARSE_LEVEL 30
+>>>>>>> rdelfin/streetgeneration
 
 #include <generation/building/Building.h>
 
@@ -291,8 +295,6 @@ int main() {
 
     Floor floor;
     Area area;
-    AreaLine areaLine;
-    int i, j;
     //vector<LineMesh> waterMeshes;
     //vector<LineMesh> parksMeshes;
 #if !USE_LSYSTEM
@@ -310,21 +312,22 @@ int main() {
 
      std::cerr << "BEGINNING PARSE..." << std::endl;
 
-     // Parse 10 times
-     for(int i = 0; i < PARSE_LEVEL; i++) {
-         std::cerr << "\tlevel " << i << std::endl;
-         parser.substitution();
-     }
+    // Parse 10 times
+    for(int i = 0; i < PARSE_LEVEL; i++) {
+        std::cerr << "\tlevel " << (i+1) << "/" << PARSE_LEVEL << std::endl;
+        parser.substitution();
+    }
 
-     std::vector<StreetSegment> streets = parser.parser();
+    std::vector<StreetSegment*> streets;
+    std::vector<Intersection*> intersections;
+    parser.parse(streets, intersections);
 
-     for(StreetSegment ss : streets) {
-         ss.addLines(streetVertices, streetFaces, glm::vec3(0.0f, 1.0f, 0.0f), 0.5f);
-     }
+    for(StreetSegment* ss : streets) {
+        ss->addLines(streetVertices, streetFaces, 0.5f, -1.90f);
+    }
 
-     for(auto i = 0; i < streetVertices.size(); i++) {
-         streetNormals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
-     }
+    for(size_t i = 0; i < streetVertices.size(); i++) {
+        streetNormals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
 #endif
 
     std::vector<glm::vec4> buildingVert, buildingNormals;
@@ -407,6 +410,15 @@ int main() {
         it->update();
         append_mesh_data(buildingVert, buildingNormals, buildingFaces, it->transformedVertices, it->transformedNormals, it->faces);
     }
+
+    // Clear out streets and intersections
+    for(StreetSegment* street : streets)
+        delete street;
+    for(Intersection* intersection : intersections)
+        delete intersection;
+
+    streets.clear();
+    intersections.clear();
 
 
 

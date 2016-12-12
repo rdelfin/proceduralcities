@@ -5,13 +5,18 @@
 #include <generation/street/Intersection.h>
 #include <generation/street/StreetSegment.h>
 
-Intersection::Intersection(glm::vec3 position)
-    : position(position) {
+Intersection::Intersection(glm::vec2 position)
+    : position(position), streets() {
+
+}
+
+Intersection::Intersection(const Intersection& intersection)
+    : position(intersection.position), streets(intersection.streets) {
 
 }
 
 bool Intersection::addStartingStreet(StreetSegment* s) {
-    if(s->get(0.0) == position) {
+    if(s != nullptr && glm::length(s->get(0.0) - position) < 0.001) {
         streets.push_back(s);
         return true;
     }
@@ -20,7 +25,7 @@ bool Intersection::addStartingStreet(StreetSegment* s) {
 }
 
 bool Intersection::addEndingStreet(StreetSegment* s) {
-    if(s->get(1.0) == position) {
+    if(s != nullptr && glm::length(s->get(1.0) - position) < 0.001) {
         streets.push_back(s);
         return true;
     }
@@ -28,7 +33,7 @@ bool Intersection::addEndingStreet(StreetSegment* s) {
     return false;
 }
 
-glm::vec3 Intersection::getPosition() {
+glm::vec2 Intersection::getPosition() {
     return position;
 }
 

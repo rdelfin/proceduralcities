@@ -11,18 +11,20 @@
 class StreetSegment;
 
 class Intersection {
-    Intersection(glm::vec3 position);
+public:
+    Intersection(glm::vec2 position);
+    Intersection(const Intersection&);
 
     bool addStartingStreet(StreetSegment*);
     bool addEndingStreet(StreetSegment*);
-    glm::vec3 getPosition();
+    glm::vec2 getPosition();
     const std::vector<StreetSegment*>& getStreets();
 
     ~Intersection();
 
 private:
     std::vector<StreetSegment*> streets;
-    glm::vec3 position;
+    glm::vec2 position;
 };
 
 

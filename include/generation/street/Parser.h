@@ -10,6 +10,7 @@
 #include <generation/street/LocalConstraints.h>
 
 #include <generation/street/StreetSegment.h>
+#include <generation/street/Intersection.h>
 
 class Parser {
 public:
@@ -17,13 +18,15 @@ public:
 
     std::vector<Module*> substitution();
 
-    std::vector<StreetSegment> parser();
+    void parse(std::vector<StreetSegment*>& streets, std::vector<Intersection*>& intersection);
 
     ~Parser();
 private:
     std::vector<Module*> modules;
     GlobalGoals globalGoals;
     LocalConstraints localConstraints;
+
+    Intersection* getIntersection(glm::vec2 p, std::vector<Intersection*>& intersection);
 };
 
 
