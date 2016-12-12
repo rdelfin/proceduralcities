@@ -22,6 +22,9 @@ class StreetLine {
 public:
     StreetLine(glm::vec4 endpoint1, glm::vec4 endpoint2);
 
+    // Drops y and w coordinates
+    bool intersects(glm::vec2 a, glm::vec2 b, glm::vec2 c, glm::vec2 d, float width);
+
     glm::vec4 endpoint1;
     glm::vec4 endpoint2;
 };
