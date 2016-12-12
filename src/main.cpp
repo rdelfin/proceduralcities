@@ -183,9 +183,9 @@ int main() {
     std::vector<glm::uvec3> buildingFaces;
 
     std::vector<Building> buildings = {
-            Building(10.0f, 10.0f, 15.0f, glm::vec3(0.0f, -2.0f, 0.0f), PI - streetMap.angle),
-            Building(10.0f, 10.0f, 15.0f, glm::vec3(20.0f, -2.0f, 0.0f), PI - streetMap.angle),
-            Building(10.0f, 10.0f, 15.0f, glm::vec3(20.0f, -2.0f, 50.0f), PI - streetMap.angle)
+            Building(0.05f, 0.0f, 15.0f, glm::vec3(0.0f, -2.0f, 0.0f), PI - streetMap.angle),
+            Building(0.05f, 0.05f, 15.0f, glm::vec3(20.0f, -2.0f, 0.0f), PI - streetMap.angle),
+            Building(0.05f, 0.05f, 15.0f, glm::vec3(20.0f, -2.0f, 50.0f), PI - streetMap.angle)
     };
 
 
@@ -219,7 +219,7 @@ int main() {
         glCullFace(GL_BACK);
 
         floorMesh.draw();
-        //streetMesh.draw();
+        streetMesh.draw();
         waterMesh.draw();
         parksMesh.draw();
         buildingsMesh.draw();
