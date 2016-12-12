@@ -390,23 +390,20 @@ void StreetMap::nextIteration(map<float, set<float>> waterPoints, map<float, set
 
 
 // Altered version of http://pastebin.com/03BigiCn
-bool StreetLine::intersects(glm::vec2 a, glm::vec2 b, glm::vec2 c, glm::vec2 d, float width) {
-    glm::vec2 ep1 = glm::vec2(endpoint1.x, endpoint1.z), ep2 = glm::vec2(endpoint2.x, endpoint2.z);
+bool StreetLine::intersects(glm::vec2 avec, glm::vec2 bvec, glm::vec2 cvec, glm::vec2 dvec, float width) {
+    glm::vec2 ep1(endpoint1.x, endpoint1.z), ep2(endpoint2.x, endpoint2.z);
     glm::vec2 length = ep2 - ep1;
-    glm::vec2 tangent = width*glm::normalize(glm::vec2(length.y, -length.x));
-
-    std::vector<std::vector<glm::vec2>> polygons;
-    std::vector<glm::vec2> polygonA = {a, b, c, d};
-    std::vector<glm::vec2> polygonB = {ep1-tangent, ep1+tangent, ep2+tangent, ep2-tangent};
-    polygons.push_back(polygonA); polygons.push_back(polygonB);
+    glm::vec2 tangent = (glm::vec2(length.y, -length.x)*(1/sqrt(length.y*length.y + length.x*length.x)))*width;
+    std::vector<glm::vec2> a = {avec, bvec, cvec, dvec};
+    std::vector<glm::vec2> b = {ep1+tangent, ep2+tangent, ep2-tangent, ep1-tangent};
 
     for(int polyi = 0; polyi < 2; ++polyi)
     {
-        std::vector<glm::vec2> polygon = polygons[polyi];
+        const std::vector<glm::vec2>& polygon = polyi == 0 ? a : b;
 
-        for(int i1 = 0; i1 < polygon[polyi].size(); ++i1)
+        for(int i1 = 0; i1 < polygon.size(); ++i1)
         {
-            const int i2 = (i1 + 1) % polygon[polyi].size();
+            const int i2 = (i1 + 1) % polygon.size();
 
             const double normalx = polygon[i2].y - polygon[i1].y;
             const double normaly = polygon[i2].x - polygon[i1].x;
@@ -415,8 +412,8 @@ bool StreetLine::intersects(glm::vec2 a, glm::vec2 b, glm::vec2 c, glm::vec2 d, 
             double maxA = std::numeric_limits<double>::min();
             for(int ai = 0; ai < a.size(); ++ai)
             {
-                const double projected = normalx * polygonA[ai].x +
-                                         normaly * polygonA[ai].y;
+                const double projected = normalx * a[ai].x +
+                                         normaly * a[ai].y;
                 if( projected < minA ) minA = projected;
                 if( projected > maxA ) maxA = projected;
             }
@@ -425,8 +422,8 @@ bool StreetLine::intersects(glm::vec2 a, glm::vec2 b, glm::vec2 c, glm::vec2 d, 
             double maxB = std::numeric_limits<double>::min();
             for(int bi = 0; bi < b.size(); ++bi)
             {
-                const double projected = normalx * polygonB[bi].x +
-                                         normaly * polygonB[bi].y;
+                const double projected = normalx * b[bi].x +
+                                         normaly * b[bi].y;
                 if( projected < minB ) minB = projected;
                 if( projected > maxB ) maxB = projected;
             }
