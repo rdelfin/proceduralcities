@@ -19,7 +19,7 @@ public:
 
     void addLines(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, float width, float y);
 
-    bool collides(const StreetSegment& segment, glm::vec3& intersectionPoint);
+    bool collides(const StreetSegment& segment, glm::vec2& intersectionPoint);
 
     bool operator==(const StreetSegment& rhs);
 

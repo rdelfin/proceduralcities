@@ -55,12 +55,35 @@ void StreetSegment::addLines(std::vector<glm::vec4>& vertices, std::vector<glm::
 
 }
 
-bool StreetSegment::collides(const StreetSegment& segment, glm::vec3& intersectionPoint) {
+bool StreetSegment::collides(const StreetSegment& segment, glm::vec2& intersectionPoint) {
     if(*this == segment) {
         return false;
     }
 
-    //for(auto i = 0; i <  )
+    for(size_t i = 0; i <  waypoints.size() - 1; i++) {
+        for(size_t j = 0; j < segment.waypoints.size() - 1; j++) {
+            // Implemented according to http://gamedev.stackexchange.com/a/44733
+            glm::vec2 start1 = waypoints[i], start2 = segment.waypoints[j];
+            glm::vec2 dir1 = waypoints[i+1] - waypoints[i], dir2 = segment.waypoints[j+1] - segment.waypoints[j];
+
+            float den = dir2.x*dir1.y - dir2.y*dir1.x;
+
+            // Skip this pair if lines are parallel
+            if(den == 0)
+                continue;
+
+            float u = (dir1.x*(start2.y - start1.y) + dir1.y*(start1.x - start2.x)) / den;
+            float t = (dir2.x*(start1.y - start2.y) + dir2.y*(start2.x - start1.x)) / -den;
+
+            // If the parametric equation is within valid bounds, there is collision
+            if(u >= 0 && u <= 1 && t >= 0 && t <= 1) {
+                intersectionPoint = start2 + dir2 * u;
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 bool StreetSegment::operator==(const StreetSegment& rhs) {
