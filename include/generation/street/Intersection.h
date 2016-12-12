@@ -11,6 +11,7 @@
 class StreetSegment;
 
 class Intersection {
+public:
     Intersection(glm::vec3 position);
 
     bool addStartingStreet(StreetSegment*);

@@ -20,7 +20,7 @@ public:
     void addLines(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, glm::vec3 up, float width);
 
     ~StreetSegment();
-private:
+
     std::vector<glm::vec3> waypoints;
     bool highway;
 

@@ -6,8 +6,12 @@
 
 #include <generation/street/Modules.h>
 
+#include <generation/street/StreetSegment.h>
+#include <generation/street/Intersection.h>
+
 #include <vector>
 #include <iostream>
+#include <unordered_map>
 
 #define PI 3.14159265f
 
@@ -132,8 +136,8 @@ std::vector<Module*> Parser::substitution() {
 }
 
 
-std::vector<StreetSegment> Parser::parser() {
-    std::vector<StreetSegment> streets;
+void Parser::parse(std::vector<StreetSegment>& streets, std::vector<Intersection>& intersection) {
+    std::unordered_map<glm::vec3, Intersection*> intersectionMap;
 
     for(Module* module : modules) {
         if(dynamic_cast<DrawnRoadModule*>(module)) {
@@ -144,11 +148,20 @@ std::vector<StreetSegment> Parser::parser() {
             std::vector<glm::vec3> waypoints =
                     { glm::vec3(start.x, -1.90f, start.y),
                       glm::vec3(end.x, -1.90f, end.y) };
-            streets.push_back(StreetSegment(waypoints, nullptr, nullptr));
+
+            if(intersectionMap.count(waypoints[0]) == 0) {
+                intersection.push_back(Intersection(waypoints[0]));
+                intersectionMap.insert({waypoints[0], &intersection[intersection.size() - 1]});
+            }
+
+            if(intersectionMap.count(waypoints[1]) == 0) {
+                intersection.push_back(Intersection(waypoints[1]));
+                intersectionMap.insert({waypoints[1], &intersection[intersection.size() - 1]});
+            }
+
+            streets.push_back(StreetSegment(waypoints, intersectionMap[waypoints[0]], intersectionMap[waypoints[1]]));
         }
     }
-
-    return streets;
 }
 
 Parser::~Parser() {

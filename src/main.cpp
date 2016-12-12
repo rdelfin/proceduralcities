@@ -130,8 +130,6 @@ int main() {
 
     Floor floor;
     Area area;
-    AreaLine areaLine;
-    int i, j;
     //vector<LineMesh> waterMeshes;
     //vector<LineMesh> parksMeshes;
     //StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
@@ -151,7 +149,9 @@ int main() {
         parser.substitution();
     }
 
-    std::vector<StreetSegment> streets = parser.parser();
+    std::vector<StreetSegment> streets;
+    std::vector<Intersection> intersection;
+    parser.parse(streets, intersection);
 
     for(StreetSegment ss : streets) {
         ss.addLines(streetVertices, streetFaces, glm::vec3(0.0f, 1.0f, 0.0f), 0.5f);
