@@ -53,8 +53,8 @@ bool LocalConstraints::collidesWithEnvironment(glm::vec2 start, glm::vec2 end) {
     for(float i = 0; i <= 1.0f; i += 0.01f) {
         glm::vec2 point = start + i*(end - start);
 
-        float x = (float) round(point.x);
-        float z = (float) round(point.y);
+        float x = round(point.x);
+        float z = round(point.y);
         if (waterPoints.count(x) != 0 && waterPoints[x].count(z) != 0) {
             return true;
         } else if (parksPoints.count(x) != 0 && parksPoints[x].count(z) != 0) {
