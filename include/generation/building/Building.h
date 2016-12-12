@@ -5,6 +5,8 @@
 
 #include <glm/glm.hpp>
 
+#include <TriangleMesh.h>
+
 using namespace std;
 
 #define FLOOR_HEIGHT 1.0f
@@ -15,9 +17,10 @@ enum {
     HOUSE
 } typedef buildingStyle;
 
-class Building {
+class Building : public TriangleMesh {
     public:
-        Building(float w, float l, float centerDistance);
+        Building(float w, float l, float centerDistance, const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader,
+                 const std::vector<ShaderUniform>& uniforms);
         void nextIteration();
         void generateRenderData();
 
@@ -27,10 +30,6 @@ class Building {
         buildingStyle style;
         int height;
         int type;
-
-        vector<glm::vec4> vertices;
-        vector<glm::vec4> normals;
-        vector<glm::uvec3> faces;
     
     private:
         void quad(glm::vec4 points[], int a, int b, int c, int d);

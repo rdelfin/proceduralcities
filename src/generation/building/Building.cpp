@@ -5,13 +5,17 @@
 
 using namespace std;
 
-Building::Building(float w, float l, float centerDistance) {
+Building::Building(float w, float l, float centerDistance, const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader,
+                   const std::vector<ShaderUniform>& uniforms) {
     this->w = w;
     this->l = l;
     this->centerDistance = centerDistance;
     index = 0;
     
     nextIteration();
+    generateRenderData();
+
+    constructorImpl(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
 }
 
 void Building::nextIteration() {

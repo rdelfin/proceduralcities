@@ -20,7 +20,11 @@ public:
     virtual void draw();
 
     virtual ~TriangleMesh();
-private:
+protected:
+    void constructorImpl(const std::vector<glm::vec4>& vertices, const std::vector<glm::vec4>& normals, const std::vector<glm::uvec3>& faces,
+                         const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader,
+                         const std::vector<ShaderUniform>& uniforms);
+
     std::vector<glm::vec4> vertices, normals;
     std::vector<glm::uvec3> faces;
     std::vector<unsigned> vbo;

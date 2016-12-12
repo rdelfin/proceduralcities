@@ -23,9 +23,18 @@ TriangleMesh::TriangleMesh() {
 
 TriangleMesh::TriangleMesh(const std::vector<glm::vec4>& vertices, const std::vector<glm::vec4>& normals, const std::vector<glm::uvec3>& faces,
                            const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader,
-                           const std::vector<ShaderUniform>& uniforms)
-    : vertices(vertices), normals(normals), faces(faces) {
+                           const std::vector<ShaderUniform>& uniforms) {
+    constructorImpl(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
+}
 
+void TriangleMesh::constructorImpl(const std::vector<glm::vec4> &vertices, const std::vector<glm::vec4> &normals,
+                                   const std::vector<glm::uvec3> &faces, const Shader &vertexShader,
+                                   const Shader &geometryShader, const Shader &fragmentShader,
+                                   const std::vector<ShaderUniform> &uniforms) {
+
+    this->vertices = vertices;
+    this->normals = normals;
+    this->faces = faces;
     // Generate VAO
     CHECK_GL_ERROR(glGenVertexArrays(1, &vao));
     CHECK_GL_ERROR(glBindVertexArray(vao));

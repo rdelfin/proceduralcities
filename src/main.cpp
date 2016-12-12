@@ -165,13 +165,12 @@ int main() {
     // }
 
 
-    Building building(10.0f, 10.0f, 15.0f);
-    building.generateRenderData();
+    Building building(10.0f, 10.0f, 15.0f, vertexShader, geometryShader, buildingFragmentShader, uniforms);
 
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
     TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);
     TriangleMesh parksMesh(area.parksVertices, area.parksNormals, area.parksFaces, vertexShader, geometryShader, parksFragmentShader, uniforms);
-    TriangleMesh buildingsMesh(building.vertices, building.normals, building.faces, vertexShader, geometryShader, buildingFragmentShader, uniforms);
+    //TriangleMesh buildingsMesh(building.vertices, building.normals, building.faces, vertexShader, geometryShader, buildingFragmentShader, uniforms);
     TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
     //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
     // TriangleMesh streetMesh(streetVertices, streetNormals, streetFaces, vertexShader, geometryShader, streetFragmentShader, uniforms);
@@ -194,7 +193,7 @@ int main() {
         streetMesh.draw();
         waterMesh.draw();
         parksMesh.draw();
-        buildingsMesh.draw();
+        building.draw();
 
         // Poll and swap.
         glfwPollEvents();
