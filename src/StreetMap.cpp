@@ -390,7 +390,7 @@ void StreetMap::nextIteration(map<float, set<float>> waterPoints, map<float, set
 
 
 // Altered version of http://pastebin.com/03BigiCn
-bool StreetLine::intersects(glm::vec2 avec, glm::vec2 bvec, glm::vec2 cvec, glm::vec2 dvec, float width) {
+bool StreetLine::intersects(glm::vec2 avec, glm::vec2 bvec, glm::vec2 cvec, glm::vec2 dvec, float width) const {
     glm::vec2 ep1(endpoint1.x, endpoint1.z), ep2(endpoint2.x, endpoint2.z);
     glm::vec2 length = ep2 - ep1;
     glm::vec2 tangent = (glm::vec2(length.y, -length.x)*(1/sqrt(length.y*length.y + length.x*length.x)))*width;

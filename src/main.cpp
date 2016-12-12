@@ -29,6 +29,8 @@
 
 #include <generation/building/Building.h>
 
+#include <glm/gtx/rotate_vector.hpp>
+
 using namespace std;
 
 
@@ -187,6 +189,25 @@ bool checkBuildingsCollision(int x, int z, map<float, set<float>> buildingPoints
     return false;
 }
 
+bool checkRoadCollision(float x, float z, float width, float height, float theta, const std::vector<StreetLine>& lines) {
+    glm::vec2 a(width / 2, -height / 2), b(width / 2, height / 2), c(-width / 2, height / 2), d(-width / 2,
+                                                                                                -height / 2);
+    glm::vec2 translation = glm::vec2(x, z);
+
+    a = glm::rotate(a, theta) + translation;
+    b = glm::rotate(b, theta) + translation;
+    c = glm::rotate(c, theta) + translation;
+    d = glm::rotate(d, theta) + translation;
+
+    for (auto it = lines.begin(); it != lines.end(); ++it) {
+        if (it->intersects(a, b, c, d, 0.75f)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 int main() {
     srand (time(NULL));
 
@@ -319,13 +340,19 @@ int main() {
     float closestDistance;
     float distance;
     bool created;
-    for (i = 0; i < 450; i++) {
+
+    std::vector<StreetLine> lines;
+    lines.insert(lines.end(), streetMap.streetsInAngle1.begin(), streetMap.streetsInAngle1.end());
+    lines.insert(lines.end(), streetMap.streetsInAngle2.begin(), streetMap.streetsInAngle2.end());
+
+
+    for (i = 0; i < 50; i++) {
         created = false;
         while (!created) {
             closestDistance = 999999;
             x = rand() % 201 - 100;
             z = rand() % 201 - 100;
-            if(!checkWaterParkCollision(x, z, area.waterPoints, area.parksPoints) && !checkBuildingsCollision(x, z, buildingPoints)) {
+            if(!checkWaterParkCollision(x, z, area.waterPoints, area.parksPoints) && !checkBuildingsCollision(x, z, buildingPoints) && checkRoadCollision(x, z, 0.05f, 0.05f, PI-streetMap.angle, lines)) {
                 for (j = 0; j < numberOfCenters; j++) {
                     distance = glm::length(area.populationCenters[j] - glm::vec2(x, z));
                     if (distance < closestDistance) {
