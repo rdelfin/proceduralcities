@@ -13,6 +13,8 @@ public:
 
     void yaw(float dir);
     void pitch(float dir);
+    void fpsYaw(float dir);
+    void fpsPitch(float dir);
     void roll(float dir);
     void pan(glm::vec3 dir);
     void strave(glm::vec3 dir);
@@ -34,7 +36,8 @@ private:
 
     glm::mat4 eyeTranslateMat = glm::mat4(1.0f);
     glm::mat4 centerTranslateMat = glm::mat4(1.0f);
-    glm::mat4 rotateMat = glm::mat4(1.0f);
+    glm::mat4 eyeRotateMat = glm::mat4(1.0f);
+    glm::mat4 centerRotateMat = glm::mat4(1.0f);
 
     glm::vec3 finalEye = glm::vec3(0.0f, 0.0f, camera_distance_);
 
