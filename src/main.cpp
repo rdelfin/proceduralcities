@@ -149,17 +149,26 @@ int main() {
         parser.substitution();
     }
 
-    std::vector<StreetSegment> streets;
-    std::vector<Intersection> intersection;
-    parser.parse(streets, intersection);
+    std::vector<StreetSegment*> streets;
+    std::vector<Intersection*> intersections;
+    parser.parse(streets, intersections);
 
-    for(StreetSegment ss : streets) {
-        ss.addLines(streetVertices, streetFaces, glm::vec3(0.0f, 1.0f, 0.0f), 0.5f);
+    for(StreetSegment* ss : streets) {
+        ss->addLines(streetVertices, streetFaces, 0.5f, -1.90f);
     }
 
-    for(auto i = 0; i < streetVertices.size(); i++) {
+    for(size_t i = 0; i < streetVertices.size(); i++) {
         streetNormals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
     }
+
+    // Clear out streets and intersections
+    for(StreetSegment* street : streets)
+        delete street;
+    for(Intersection* intersection : intersections)
+        delete intersection;
+
+    streets.clear();
+    intersections.clear();
 
 
     Building building(10.0f, 10.0f, 15.0f);

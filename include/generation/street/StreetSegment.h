@@ -13,15 +13,19 @@ class Intersection;
 class StreetSegment {
 public:
     StreetSegment();
-    StreetSegment(const std::vector<glm::vec3>& waypoints, Intersection* start, Intersection* end, bool highway = false);
+    StreetSegment(const std::vector<glm::vec2>& waypoints, Intersection* start, Intersection* end, bool highway = false);
 
-    glm::vec3 get(float val);
+    glm::vec2 get(float val);
 
-    void addLines(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, glm::vec3 up, float width);
+    void addLines(std::vector<glm::vec4>& vertices, std::vector<glm::uvec3>& faces, float width, float y);
+
+    bool collides(const StreetSegment& segment, glm::vec3& intersectionPoint);
+
+    bool operator==(const StreetSegment& rhs);
 
     ~StreetSegment();
 
-    std::vector<glm::vec3> waypoints;
+    std::vector<glm::vec2> waypoints;
     bool highway;
 
     Intersection *start, *end;

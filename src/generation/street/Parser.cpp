@@ -29,6 +29,10 @@ Parser::Parser(const GlobalGoals& globalGoals, const LocalConstraints& localCons
 }
 
 std::vector<Module*> Parser::substitution() {
+    bool parsedStreets = false;
+    std::vector<StreetSegment*> streets;
+    std::vector<Intersection*> intersections;
+
     std::vector<Module*> newModules;
     for(int i = 0; i < (long)modules.size(); i++) {
 
@@ -108,7 +112,12 @@ std::vector<Module*> Parser::substitution() {
             RoadAttribute newRoadAttr(0, 0, glm::vec2(0, 0));
             StateAttribute newStateAttr(STATE_UNASSIGNED);
 
-            localConstraints(oldRoadAttr, newRoadAttr, newStateAttr);
+            if(!parsedStreets) {
+                parse(streets, intersections);
+                parsedStreets = true;
+            }
+
+            localConstraints.getAttributes(oldRoadAttr, streets, intersections, newRoadAttr, newStateAttr);
 
             newModules.push_back(new InquiryModule(newRoadAttr,
                                                    newStateAttr));
@@ -130,38 +139,44 @@ std::vector<Module*> Parser::substitution() {
         delete mod;
     }
 
+    // delete street segments and intersections
+    if(parsedStreets) {
+        for (StreetSegment* segment : streets)
+            delete segment;
+        for (Intersection* intersection : intersections)
+            delete intersection;
+
+    }
+
     modules = newModules;
 
     return newModules;
 }
 
 
-void Parser::parse(std::vector<StreetSegment>& streets, std::vector<Intersection>& intersection) {
-    std::unordered_map<glm::vec3, Intersection*> intersectionMap;
-
+void Parser::parse(std::vector<StreetSegment*>& streets, std::vector<Intersection*>& intersections) {
     for(Module* module : modules) {
         if(dynamic_cast<DrawnRoadModule*>(module)) {
             DrawnRoadModule* drawnRoadModule = dynamic_cast<DrawnRoadModule*>(module);
             RoadAttribute attr = drawnRoadModule->roadAttribute;
             glm::vec2 start = attr.start, end = attr.end();
 
-            std::vector<glm::vec3> waypoints =
-                    { glm::vec3(start.x, -1.90f, start.y),
-                      glm::vec3(end.x, -1.90f, end.y) };
+            std::vector<glm::vec2> waypoints = { start, end };
 
-            if(intersectionMap.count(waypoints[0]) == 0) {
-                intersection.push_back(Intersection(waypoints[0]));
-                intersectionMap.insert({waypoints[0], &intersection[intersection.size() - 1]});
-            }
-
-            if(intersectionMap.count(waypoints[1]) == 0) {
-                intersection.push_back(Intersection(waypoints[1]));
-                intersectionMap.insert({waypoints[1], &intersection[intersection.size() - 1]});
-            }
-
-            streets.push_back(StreetSegment(waypoints, intersectionMap[waypoints[0]], intersectionMap[waypoints[1]]));
+            streets.push_back(new StreetSegment(waypoints, getIntersection(waypoints[0], intersections), getIntersection(waypoints[1], intersections)));
         }
     }
+}
+
+Intersection* Parser::getIntersection(glm::vec2 p, std::vector<Intersection*>& intersection) {
+    for(int i = 0; i < intersection.size(); i++) {
+        if(glm::length(intersection[i]->getPosition() - p) < 0.01f) {
+            return intersection[i];
+        }
+    }
+
+    intersection.push_back(new Intersection(p));
+    return intersection[intersection.size() - 1];
 }
 
 Parser::~Parser() {
