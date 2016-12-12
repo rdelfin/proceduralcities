@@ -352,7 +352,7 @@ int main() {
             closestDistance = 999999;
             x = rand() % 201 - 100;
             z = rand() % 201 - 100;
-            if(!checkWaterParkCollision(x, z, area.waterPoints, area.parksPoints) && !checkBuildingsCollision(x, z, buildingPoints) && checkRoadCollision(x, z, 0.05f, 0.05f, PI-streetMap.angle, lines)) {
+            if(!checkWaterParkCollision(x, z, area.waterPoints, area.parksPoints) && !checkBuildingsCollision(x, z, buildingPoints) && !checkRoadCollision(x, z, 0.05f, 0.05f, PI-streetMap.angle, lines)) {
                 for (j = 0; j < numberOfCenters; j++) {
                     distance = glm::length(area.populationCenters[j] - glm::vec2(x, z));
                     if (distance < closestDistance) {
