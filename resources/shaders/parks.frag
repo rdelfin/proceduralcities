@@ -3,5 +3,5 @@
 out vec4 vertex_color;
 
 void main() {
-    vertex_color = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+    vertex_color = vec4(0.023529412, 0.576470588, 0.133333333, 1.0f);
 }

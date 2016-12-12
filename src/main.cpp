@@ -26,13 +26,6 @@
 #include <generation/street/Parser.h>
 
 #define USE_LSYSTEM 0
-#define BUILDINGS 200
-
-#if USE_LSYSTEM
-#define PARSE_LEVEL 30
-#else
-#define PARSE_LEVEL 10
-#endif
 
 #include <generation/building/Building.h>
 
@@ -58,6 +51,9 @@ bool g_ctrl_pressed;
 bool g_shift_pressed;
 bool g_alt_pressed;
 bool fps = false;
+
+int parseLevel = 0;
+int buildingCount = 0;
 
 void
 ErrorCallback(int error, const char* description)
@@ -215,7 +211,15 @@ bool checkRoadCollision(float x, float z, float width, float height, float theta
     return false;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+    if(argc != 3) {
+        parseLevel = 10;
+        buildingCount = 350;
+    } else {
+        parseLevel = atoi(argv[1]);
+        buildingCount = atoi(argv[2]);
+    }
+
     srand (time(NULL));
 
     std::string window_title = "City Generator";
@@ -301,7 +305,7 @@ int main() {
     //vector<LineMesh> parksMeshes;
 #if !USE_LSYSTEM
     StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
-    for (int i = 0; i < PARSE_LEVEL; i++) {
+    for (int i = 0; i < parseLevel; i++) {
         streetMap.nextIteration(area.waterPoints, area.parksPoints);
     }
 #else
@@ -315,8 +319,8 @@ int main() {
      std::cerr << "BEGINNING PARSE..." << std::endl;
 
     // Parse 10 times
-    for(int i = 0; i < PARSE_LEVEL; i++) {
-        std::cerr << "\tlevel " << (i+1) << "/" << PARSE_LEVEL << std::endl;
+    for(int i = 0; i < parseLevel; i++) {
+        std::cerr << "\tlevel " << (i+1) << "/" << parseLevel << std::endl;
         parser.substitution();
     }
 
@@ -359,7 +363,7 @@ int main() {
 
 
 
-    for (int i = 0; i < BUILDINGS; i++) {
+    for (int i = 0; i < buildingCount; i++) {
         created = false;
         while (!created) {
             closestDistance = 999999;
