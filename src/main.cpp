@@ -56,6 +56,116 @@ ErrorCallback(int error, const char* description)
     std::cerr << "GLFW Error: " << description << "\n";
 }
 
+bool checkWaterParkCollision(int x, int z, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints) {
+    if (waterPoints.count(x) != 0) {
+        if (waterPoints[x].count(z) != 0) {
+            return true;
+        }
+        if (waterPoints[x].count(z - 2) != 0) {
+            return true;
+        }
+        if (waterPoints[x].count(z + 2) != 0) {
+            return true;
+        }
+    }
+    if (waterPoints.count(x - 2) != 0) {
+        if (waterPoints[x - 2].count(z) != 0) {
+            return true;
+        }
+        if (waterPoints[x - 2].count(z - 2) != 0) {
+            return true;
+        }
+        if (waterPoints[x - 2].count(z + 2) != 0) {
+            return true;
+        }
+    }
+    if (waterPoints.count(x + 2) != 0) {
+        if (waterPoints[x + 2].count(z) != 0) {
+            return true;
+        }
+        if (waterPoints[x + 2].count(z - 2) != 0) {
+            return true;
+        }
+        if (waterPoints[x + 2].count(z + 2) != 0) {
+            return true;
+        }
+    }
+    
+    if (parksPoints.count(x) != 0) {
+        if (parksPoints[x].count(z) != 0) {
+            return true;
+        }
+        if (parksPoints[x].count(z - 2) != 0) {
+            return true;
+        }
+        if (parksPoints[x].count(z + 2) != 0) {
+            return true;
+        }
+    }
+    if (parksPoints.count(x - 2) != 0) {
+        if (parksPoints[x - 2].count(z) != 0) {
+            return true;
+        }
+        if (parksPoints[x - 2].count(z - 2) != 0) {
+            return true;
+        }
+        if (parksPoints[x - 2].count(z + 2) != 0) {
+            return true;
+        }
+    }
+    if (parksPoints.count(x + 2) != 0) {
+        if (parksPoints[x + 2].count(z) != 0) {
+            return true;
+        }
+        if (parksPoints[x + 2].count(z - 2) != 0) {
+            return true;
+        }
+        if (parksPoints[x + 2].count(z + 2) != 0) {
+            return true;
+        }
+    }
+
+    else if (x - 2 <= -100.0f || x + 2 >= 100.0f || z - 2 <= -100.0f || z + 2 >= 100.0f) {
+        return true;
+    }
+    return false;
+}
+
+bool checkBuildingsCollision(int x, int z, vector<Building> buildings) {
+    int size = buildings.size();
+    glm::vec3 vecA1 = glm::vec3(x, -1.9f, z);
+    glm::vec3 vecA2 = glm::vec3(x - 2, -1.9f, z - 2);
+    glm::vec3 vecA3 = glm::vec3(x - 2, -1.9f, z + 2);
+    glm::vec3 vecA4 = glm::vec3(x + 2, -1.9f, z - 2);
+    glm::vec3 vecA5 = glm::vec3(x + 2, -1.9f, z + 2);
+    glm::vec3 vecB;
+    int i;
+    for (i = 0; i < size; i++) {
+        vecB = buildings[i].position;
+        if (vecA1[0] >= vecB[0] - 2.0f && vecA1[0] <= vecB[0] + 2.0f &&
+            vecA1[2] >= vecB[2] - 2.0f && vecA1[2] <= vecB[2] + 2.0f) {
+            return true;
+        }
+        if (vecA2[0] >= vecB[0] - 2.0f && vecA2[0] <= vecB[0] + 2.0f &&
+            vecA2[2] >= vecB[2] - 2.0f && vecA2[2] <= vecB[2] + 2.0f) {
+            return true;
+        }
+        if (vecA3[0] >= vecB[0] - 2.0f && vecA3[0] <= vecB[0] + 2.0f &&
+            vecA3[2] >= vecB[2] - 2.0f && vecA3[2] <= vecB[2] + 2.0f) {
+            return true;
+        }
+        if (vecA4[0] >= vecB[0] - 2.0f && vecA4[0] <= vecB[0] + 2.0f &&
+            vecA4[2] >= vecB[2] - 2.0f && vecA4[2] <= vecB[2] + 2.0f) {
+            return true;
+        }
+        if (vecA5[0] >= vecB[0] - 2.0f && vecA5[0] <= vecB[0] + 2.0f &&
+            vecA5[2] >= vecB[2] - 2.0f && vecA5[2] <= vecB[2] + 2.0f) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 int main() {
     srand (time(NULL));
@@ -144,7 +254,7 @@ int main() {
     //vector<LineMesh> waterMeshes;
     //vector<LineMesh> parksMeshes;
     StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
-    for (i = 0; i< 35; i++) {
+    for (i = 0; i < 20; i++) {
         streetMap.nextIteration(area.waterPoints, area.parksPoints);
     }
 
@@ -182,12 +292,30 @@ int main() {
     std::vector<glm::vec4> buildingVert, buildingNormals;
     std::vector<glm::uvec3> buildingFaces;
 
-    std::vector<Building> buildings = {
-            Building(0.05f, 0.0f, 15.0f, glm::vec3(0.0f, -2.0f, 0.0f), PI - streetMap.angle),
-            Building(0.05f, 0.05f, 15.0f, glm::vec3(20.0f, -2.0f, 0.0f), PI - streetMap.angle),
-            Building(0.05f, 0.05f, 15.0f, glm::vec3(20.0f, -2.0f, 50.0f), PI - streetMap.angle)
-    };
-
+    std::vector<Building> buildings;
+    int x, z;
+    int numberOfCenters = area.populationCenters.size();
+    float closestDistance;
+    float distance;
+    bool created;
+    for (i = 0; i < 500; i++) {
+        created = false;
+        while (!created) {
+            closestDistance = 999999;
+            x = rand() % 201 - 100;
+            z = rand() % 201 - 100;
+            if(!checkWaterParkCollision(x, z, area.waterPoints, area.parksPoints) && !checkBuildingsCollision(x, z, buildings)) {
+                for (j = 0; j < numberOfCenters; j++) {
+                    distance = glm::length(area.populationCenters[j] - glm::vec2(x, z));
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                    }
+                }
+                buildings.push_back(Building(0.05f, 0.05f, closestDistance, glm::vec3(x, -1.9f, z), PI - streetMap.angle));
+                created = true;
+            }
+        }
+    }
 
     for(auto it = buildings.begin(); it != buildings.end(); ++it) {
         it->update();
