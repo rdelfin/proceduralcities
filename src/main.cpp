@@ -131,35 +131,55 @@ bool checkWaterParkCollision(int x, int z, map<float, set<float>> waterPoints, m
     return false;
 }
 
-bool checkBuildingsCollision(int x, int z, vector<Building> buildings) {
-    int size = buildings.size();
-    glm::vec3 vecA1 = glm::vec3(x, -1.9f, z);
-    glm::vec3 vecA2 = glm::vec3(x - 2, -1.9f, z - 2);
-    glm::vec3 vecA3 = glm::vec3(x - 2, -1.9f, z + 2);
-    glm::vec3 vecA4 = glm::vec3(x + 2, -1.9f, z - 2);
-    glm::vec3 vecA5 = glm::vec3(x + 2, -1.9f, z + 2);
-    glm::vec3 vecB;
-    int i;
-    for (i = 0; i < size; i++) {
-        vecB = buildings[i].position;
-        if (vecA1[0] >= vecB[0] - 2.0f && vecA1[0] <= vecB[0] + 2.0f &&
-            vecA1[2] >= vecB[2] - 2.0f && vecA1[2] <= vecB[2] + 2.0f) {
+bool checkBuildingsCollision(int x, int z, map<float, set<float>> buildingPoints) {
+    if (buildingPoints.count(x) != 0) {
+        if (buildingPoints[x].count(z) != 0) {
             return true;
         }
-        if (vecA2[0] >= vecB[0] - 2.0f && vecA2[0] <= vecB[0] + 2.0f &&
-            vecA2[2] >= vecB[2] - 2.0f && vecA2[2] <= vecB[2] + 2.0f) {
+        if (buildingPoints[x].count(z - 1) != 0) {
             return true;
         }
-        if (vecA3[0] >= vecB[0] - 2.0f && vecA3[0] <= vecB[0] + 2.0f &&
-            vecA3[2] >= vecB[2] - 2.0f && vecA3[2] <= vecB[2] + 2.0f) {
+        if (buildingPoints[x].count(z - 2) != 0) {
             return true;
         }
-        if (vecA4[0] >= vecB[0] - 2.0f && vecA4[0] <= vecB[0] + 2.0f &&
-            vecA4[2] >= vecB[2] - 2.0f && vecA4[2] <= vecB[2] + 2.0f) {
+        if (buildingPoints[x].count(z + 1) != 0) {
             return true;
         }
-        if (vecA5[0] >= vecB[0] - 2.0f && vecA5[0] <= vecB[0] + 2.0f &&
-            vecA5[2] >= vecB[2] - 2.0f && vecA5[2] <= vecB[2] + 2.0f) {
+        if (buildingPoints[x].count(z + 2) != 0) {
+            return true;
+        }
+    }
+    if (buildingPoints.count(x - 2) != 0) {
+        if (buildingPoints[x - 2].count(z) != 0) {
+            return true;
+        }
+        if (buildingPoints[x - 2].count(z - 1) != 0) {
+            return true;
+        }
+        if (buildingPoints[x - 2].count(z - 2) != 0) {
+            return true;
+        }
+        if (buildingPoints[x - 2].count(z + 1) != 0) {
+            return true;
+        }
+        if (buildingPoints[x - 2].count(z + 2) != 0) {
+            return true;
+        }
+    }
+    if (buildingPoints.count(x + 2) != 0) {
+        if (buildingPoints[x + 2].count(z) != 0) {
+            return true;
+        }
+        if (buildingPoints[x + 2].count(z - 1) != 0) {
+            return true;
+        }
+        if (buildingPoints[x + 2].count(z - 2) != 0) {
+            return true;
+        }
+        if (buildingPoints[x + 2].count(z + 1) != 0) {
+            return true;
+        }
+        if (buildingPoints[x + 2].count(z + 2) != 0) {
             return true;
         }
     }
@@ -295,16 +315,17 @@ int main() {
     std::vector<Building> buildings;
     int x, z;
     int numberOfCenters = area.populationCenters.size();
+    map<float, set<float>> buildingPoints;
     float closestDistance;
     float distance;
     bool created;
-    for (i = 0; i < 500; i++) {
+    for (i = 0; i < 450; i++) {
         created = false;
         while (!created) {
             closestDistance = 999999;
             x = rand() % 201 - 100;
             z = rand() % 201 - 100;
-            if(!checkWaterParkCollision(x, z, area.waterPoints, area.parksPoints) && !checkBuildingsCollision(x, z, buildings)) {
+            if(!checkWaterParkCollision(x, z, area.waterPoints, area.parksPoints) && !checkBuildingsCollision(x, z, buildingPoints)) {
                 for (j = 0; j < numberOfCenters; j++) {
                     distance = glm::length(area.populationCenters[j] - glm::vec2(x, z));
                     if (distance < closestDistance) {
@@ -312,6 +333,40 @@ int main() {
                     }
                 }
                 buildings.push_back(Building(0.05f, 0.05f, closestDistance, glm::vec3(x, -1.9f, z), PI - streetMap.angle));
+                if (buildingPoints.count(x) == 0) {
+                    buildingPoints[x] = set<float>();
+                }
+                if (buildingPoints.count(x - 2) == 0) {
+                    buildingPoints[x - 2] = set<float>();
+                }
+                if (buildingPoints.count(x + 2) == 0) {
+                    buildingPoints[x + 2] = set<float>();
+                }
+                buildingPoints[x].insert(z);
+                buildingPoints[x].insert(z - 1);
+                buildingPoints[x].insert(z - 2);
+                buildingPoints[x].insert(z + 1);
+                buildingPoints[x].insert(z + 2);
+                buildingPoints[x - 1].insert(z);
+                buildingPoints[x - 1].insert(z - 1);
+                buildingPoints[x - 1].insert(z - 2);
+                buildingPoints[x - 1].insert(z + 1);
+                buildingPoints[x - 1].insert(z + 2);
+                buildingPoints[x - 2].insert(z);
+                buildingPoints[x - 2].insert(z - 1);
+                buildingPoints[x - 2].insert(z - 2);
+                buildingPoints[x - 2].insert(z + 1);
+                buildingPoints[x - 2].insert(z + 2);
+                buildingPoints[x + 1].insert(z);
+                buildingPoints[x + 1].insert(z - 1);
+                buildingPoints[x + 1].insert(z - 2);
+                buildingPoints[x + 1].insert(z + 1);
+                buildingPoints[x + 1].insert(z + 2);
+                buildingPoints[x + 2].insert(z);
+                buildingPoints[x + 2].insert(z - 1);
+                buildingPoints[x + 2].insert(z - 2);
+                buildingPoints[x + 2].insert(z + 1);
+                buildingPoints[x + 2].insert(z + 2);
                 created = true;
             }
         }
