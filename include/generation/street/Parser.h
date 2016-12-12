@@ -20,11 +20,15 @@ public:
 
     void parse(std::vector<StreetSegment*>& streets, std::vector<Intersection*>& intersection);
 
+    float getAngle() { return angle; }
+
     ~Parser();
 private:
     std::vector<Module*> modules;
     GlobalGoals globalGoals;
     LocalConstraints localConstraints;
+
+    float angle;
 
     Intersection* getIntersection(glm::vec2 p, std::vector<Intersection*>& intersection);
 };

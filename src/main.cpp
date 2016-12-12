@@ -25,12 +25,14 @@
 #include <StreetMap.h>
 #include <generation/street/Parser.h>
 
-<<<<<<< HEAD
-#define PARSE_LEVEL 10
-#define USE_LSYSTEM 1
-=======
+#define USE_LSYSTEM 0
+#define BUILDINGS 200
+
+#if USE_LSYSTEM
 #define PARSE_LEVEL 30
->>>>>>> rdelfin/streetgeneration
+#else
+#define PARSE_LEVEL 10
+#endif
 
 #include <generation/building/Building.h>
 
@@ -299,7 +301,7 @@ int main() {
     //vector<LineMesh> parksMeshes;
 #if !USE_LSYSTEM
     StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
-    for (i = 0; i < PARSE_LEVEL; i++) {
+    for (int i = 0; i < PARSE_LEVEL; i++) {
         streetMap.nextIteration(area.waterPoints, area.parksPoints);
     }
 #else
@@ -328,6 +330,7 @@ int main() {
 
     for(size_t i = 0; i < streetVertices.size(); i++) {
         streetNormals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    }
 #endif
 
     std::vector<glm::vec4> buildingVert, buildingNormals;
@@ -345,28 +348,32 @@ int main() {
 
 #if USE_LSYSTEM
     for(auto it = streets.begin(); it != streets.end(); ++it) {
-        lines.push_back(it->toStreetLine());
+        lines.push_back((*it)->toStreetLine(-1.90f));
     }
+    float angle = parser.getAngle();
 #else
     lines.insert(lines.end(), streetMap.streetsInAngle1.begin(), streetMap.streetsInAngle1.end());
     lines.insert(lines.end(), streetMap.streetsInAngle2.begin(), streetMap.streetsInAngle2.end());
+    float angle = streetMap.angle;
 #endif
 
 
-    for (i = 0; i < 50; i++) {
+
+    for (int i = 0; i < BUILDINGS; i++) {
         created = false;
         while (!created) {
             closestDistance = 999999;
             x = rand() % 201 - 100;
             z = rand() % 201 - 100;
-            if(!checkWaterParkCollision(x, z, area.waterPoints, area.parksPoints) && !checkBuildingsCollision(x, z, buildingPoints) && !checkRoadCollision(x, z, 0.05f, 0.05f, PI-streetMap.angle, lines)) {
-                for (j = 0; j < numberOfCenters; j++) {
+
+            if(!checkWaterParkCollision(x, z, area.waterPoints, area.parksPoints) && !checkBuildingsCollision(x, z, buildingPoints) && !checkRoadCollision(x, z, 0.05f, 0.05f, PI - angle, lines)) {
+                for (int j = 0; j < numberOfCenters; j++) {
                     distance = glm::length(area.populationCenters[j] - glm::vec2(x, z));
                     if (distance < closestDistance) {
                         closestDistance = distance;
                     }
                 }
-                buildings.push_back(Building(0.05f, 0.05f, closestDistance, glm::vec3(x, -1.9f, z), PI - streetMap.angle));
+                buildings.push_back(Building(0.05f, 0.05f, closestDistance, glm::vec3(x, -1.9f, z), PI - angle));
                 if (buildingPoints.count(x) == 0) {
                     buildingPoints[x] = set<float>();
                 }
@@ -411,6 +418,7 @@ int main() {
         append_mesh_data(buildingVert, buildingNormals, buildingFaces, it->transformedVertices, it->transformedNormals, it->faces);
     }
 
+#if LSYSTEM
     // Clear out streets and intersections
     for(StreetSegment* street : streets)
         delete street;
@@ -419,16 +427,20 @@ int main() {
 
     streets.clear();
     intersections.clear();
-
+#endif
 
 
     TriangleMesh floorMesh(floor.vertices, floor.normals, floor.faces, vertexShader, geometryShader, floorFragmentShader, uniforms);
     TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);
     TriangleMesh parksMesh(area.parksVertices, area.parksNormals, area.parksFaces, vertexShader, geometryShader, parksFragmentShader, uniforms);
     TriangleMesh buildingsMesh(buildingVert, buildingNormals, buildingFaces, vertexShader, geometryShader, buildingFragmentShader, uniforms);
+
+#if USE_LSYSTEM
+    TriangleMesh streetMesh(streetVertices, streetNormals, streetFaces, vertexShader, geometryShader, streetFragmentShader, uniforms);
+#else
     TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
+#endif
     //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
-    //TriangleMesh streetMesh(streetVertices, streetNormals, streetFaces, vertexShader, geometryShader, streetFragmentShader, uniforms);
 
     while (!glfwWindowShouldClose(window)) {
         // Setup some basic window stuff.

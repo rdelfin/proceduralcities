@@ -24,7 +24,8 @@ public:
 
     bool operator==(const StreetSegment& rhs);
 
-    StreetLine toStreetLine(float y) { return StreetLine(waypoints[0], waypoints[waypoints.size() - 1]); }
+    StreetLine toStreetLine(float y) { return StreetLine(glm::vec4(waypoints[0].x, y, waypoints[0].y, 1.0f),
+                                                         glm::vec4(waypoints[waypoints.size()-1].x, y, waypoints[waypoints.size()-1].y, 1.0f)); }
 
     ~StreetSegment();
 

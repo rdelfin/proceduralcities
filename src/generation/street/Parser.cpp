@@ -16,11 +16,11 @@
 #define PI 3.14159265f
 
 Parser::Parser(const GlobalGoals& globalGoals, const LocalConstraints& localConstraints)
-    : globalGoals(globalGoals), localConstraints(localConstraints) {
+    : globalGoals(globalGoals), localConstraints(localConstraints), angle((rand() % 180 + 1) * PI/180.0f) {
     // Initialize using axiom (omega)
     DelayAttribute delayAttribute(0);
-    RoadAttribute roadAttribute(5, (rand() % 180 + 1) * PI/180.0f, glm::vec2(0, 0)); // TODO wtf do I put here
-    RuleAttribute ruleAttribute(roadAttribute.angle, 15, 30); // TODO: Pass in through constructor
+    RoadAttribute roadAttribute(5, angle, glm::vec2(0, 0));
+    RuleAttribute ruleAttribute(roadAttribute.angle, 15, 30);
 
     StateAttribute stateAttribute = STATE_UNASSIGNED;        // Yay implicit casts!
 
