@@ -16,7 +16,7 @@ Building::Building(float w, float l, float centerDistance, glm::vec3 position, f
     nextIteration();
     generateRenderData();
 
-    viewMatrix = glm::translate(position) * glm::rotate(angle, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::scale(glm::vec3(w, l, w));
+    viewMatrix = glm::translate(position) * glm::rotate(angle, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::scale(glm::vec3(0.1f, 0.25f, 0.1f));
     dirty = true;
 }
 
