@@ -43,7 +43,7 @@ void Building::nextIteration() {
         }
     }
 
-    type = 7;
+    type = 1;
     height = 30;
 }
 
@@ -402,7 +402,7 @@ void Building::drawL(float minx, float miny, float minz, float maxx, float maxy,
 	faces.push_back(glm::uvec3(index++, index++, index++));
 
     // Top Right
-    quad(points, 12, 11, 9, 3); 
+    quad(points, 12, 11, 9, 2); 
     normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
     normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
     normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
@@ -509,7 +509,7 @@ void Building::generateRenderData() {
     switch (type) {
         // Rectangular building
         case 1: {
-            drawPrism(-10.0f, 0, -10.0f, 10.0f, height * FLOOR_HEIGHT, 10.0f);
+            drawPrism(-3.0f, 0, -3.0f, 3.0f, height * FLOOR_HEIGHT, 3.0f);
 
             break;
         }

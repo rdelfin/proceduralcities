@@ -25,7 +25,7 @@
 #include <StreetMap.h>
 #include <generation/street/Parser.h>
 
-#define PARSE_LEVEL 6
+#define PARSE_LEVEL 10
 
 #include <generation/building/Building.h>
 
@@ -134,32 +134,35 @@ int main() {
     int i, j;
     //vector<LineMesh> waterMeshes;
     //vector<LineMesh> parksMeshes;
-    //StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
-
-    std::vector<glm::vec4> streetVertices, streetNormals;
-    std::vector<glm::uvec3> streetFaces;
-
-    GlobalGoals globalGoals;
-    LocalConstraints localConstraints(area.waterPoints, area.parksPoints);
-    Parser parser(globalGoals, localConstraints);
-
-    std::cerr << "BEGINNING PARSE..." << std::endl;
-
-    // Parse 10 times
-    for(int i = 0; i < PARSE_LEVEL; i++) {
-        std::cerr << "\tlevel " << i << std::endl;
-        parser.substitution();
+    StreetMap streetMap(ROAD_RECTANGULAR, area.populationCenters, area.waterPoints, area.parksPoints);
+    for (i = 0; i< 35; i++) {
+        streetMap.nextIteration(area.waterPoints, area.parksPoints);
     }
 
-    std::vector<StreetSegment> streets = parser.parser();
+    // std::vector<glm::vec4> streetVertices, streetNormals;
+    // std::vector<glm::uvec3> streetFaces;
 
-    for(StreetSegment ss : streets) {
-        ss.addLines(streetVertices, streetFaces, glm::vec3(0.0f, 1.0f, 0.0f), 0.5f);
-    }
+    // GlobalGoals globalGoals;
+    // LocalConstraints localConstraints(area.waterPoints, area.parksPoints);
+    // Parser parser(globalGoals, localConstraints);
 
-    for(auto i = 0; i < streetVertices.size(); i++) {
-        streetNormals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
-    }
+    // std::cerr << "BEGINNING PARSE..." << std::endl;
+
+    // // Parse 10 times
+    // for(int i = 0; i < PARSE_LEVEL; i++) {
+    //     std::cerr << "\tlevel " << i << std::endl;
+    //     parser.substitution();
+    // }
+
+    // std::vector<StreetSegment> streets = parser.parser();
+
+    // for(StreetSegment ss : streets) {
+    //     ss.addLines(streetVertices, streetFaces, glm::vec3(0.0f, 1.0f, 0.0f), 0.5f);
+    // }
+
+    // for(auto i = 0; i < streetVertices.size(); i++) {
+    //     streetNormals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+    // }
 
 
     Building building(10.0f, 10.0f, 15.0f);
@@ -169,9 +172,9 @@ int main() {
     TriangleMesh waterMesh(area.waterVertices, area.waterNormals, area.waterFaces, vertexShader, geometryShader, waterFragmentShader, uniforms);
     TriangleMesh parksMesh(area.parksVertices, area.parksNormals, area.parksFaces, vertexShader, geometryShader, parksFragmentShader, uniforms);
     TriangleMesh buildingsMesh(building.vertices, building.normals, building.faces, vertexShader, geometryShader, buildingFragmentShader, uniforms);
-    //TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
+    TriangleMesh streetMesh(streetMap.vertices, streetMap.normals, streetMap.faces, vertexShader, geometryShader, streetFragmentShader, uniforms);
     //TriangleMesh mesh(vertices, normals, faces, vertexShader, geometryShader, fragmentShader, uniforms);
-    TriangleMesh streetMesh(streetVertices, streetNormals, streetFaces, vertexShader, geometryShader, streetFragmentShader, uniforms);
+    // TriangleMesh streetMesh(streetVertices, streetNormals, streetFaces, vertexShader, geometryShader, streetFragmentShader, uniforms);
 
     while (!glfwWindowShouldClose(window)) {
         // Setup some basic window stuff.

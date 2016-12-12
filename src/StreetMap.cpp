@@ -11,8 +11,13 @@
 
 using namespace std;
 
+StreetLine::StreetLine(glm::vec4 endpoint1, glm::vec4 endpoint2) {
+    this->endpoint1 = endpoint1;
+    this->endpoint2 = endpoint2;
+}
+
 StreetMap::StreetMap(RoadPattern pattern, vector<glm::vec2> populationCenters, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints) {
-    int index = 0;
+    index = 0;
     int i;
     int j;
     size_t size = populationCenters.size();
@@ -59,7 +64,7 @@ StreetMap::StreetMap(RoadPattern pattern, vector<glm::vec2> populationCenters, m
                 point3 = glm::vec3(populationCenters[i][0] + deltaX3 * centerRadius, -1.95f, populationCenters[i][1] + deltaZ3 * centerRadius);
                 point4 = glm::vec3(populationCenters[i][0] + deltaX4 * centerRadius, -1.95f, populationCenters[i][1] + deltaZ4 * centerRadius);
 
-                calculateExtremes(point1, centerTangent, centerNormal, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright);
+                calculateExtremes(point1, centerTangent, centerNormal, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright, 1.0f);
                 // cout << glm::to_string(bottomleft) << endl;
                 // cout << glm::to_string(bottomright) << endl;
                 // cout << glm::to_string(topleft) << endl;
@@ -73,7 +78,9 @@ StreetMap::StreetMap(RoadPattern pattern, vector<glm::vec2> populationCenters, m
                 vertices.push_back(topright);
                 vertices.push_back(topleft);
 
-                calculateExtremes(point2, centerTangent, centerNormal, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright);
+                streetsInAngle1.push_back(StreetLine(bottomright, topright));
+
+                calculateExtremes(point2, centerTangent, centerNormal, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright, 1.0f);
                 // cout << glm::to_string(bottomleft) << endl;
                 // cout << glm::to_string(bottomright) << endl;
                 // cout << glm::to_string(topleft) << endl;
@@ -87,7 +94,25 @@ StreetMap::StreetMap(RoadPattern pattern, vector<glm::vec2> populationCenters, m
                 vertices.push_back(topright);
                 vertices.push_back(topleft);
 
-                calculateExtremes(point3, centerNormal, centerTangent, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright);
+                streetsInAngle1.push_back(StreetLine(bottomright, topright));
+
+                calculateExtremes(point3, centerNormal, centerTangent, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright, 1.0f);
+                // cout << glm::to_string(bottomleft) << endl;
+                // cout << glm::to_string(bottomright) << endl;
+                // cout << glm::to_string(topleft) << endl;
+                // cout << glm::to_string(topright) << endl << endl;
+
+                vertices.push_back(bottomleft);
+                vertices.push_back(bottomright);
+                vertices.push_back(topright);
+
+                vertices.push_back(bottomleft);
+                vertices.push_back(topright);
+                vertices.push_back(topleft);
+                
+                streetsInAngle2.push_back(StreetLine(bottomright, topright));
+
+                calculateExtremes(point4, centerNormal, centerTangent, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright, 1.0f);
                 // cout << glm::to_string(bottomleft) << endl;
                 // cout << glm::to_string(bottomright) << endl;
                 // cout << glm::to_string(topleft) << endl;
@@ -101,19 +126,7 @@ StreetMap::StreetMap(RoadPattern pattern, vector<glm::vec2> populationCenters, m
                 vertices.push_back(topright);
                 vertices.push_back(topleft);
 
-                calculateExtremes(point4, centerNormal, centerTangent, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright);
-                // cout << glm::to_string(bottomleft) << endl;
-                // cout << glm::to_string(bottomright) << endl;
-                // cout << glm::to_string(topleft) << endl;
-                // cout << glm::to_string(topright) << endl << endl;
-
-                vertices.push_back(bottomleft);
-                vertices.push_back(bottomright);
-                vertices.push_back(topright);
-
-                vertices.push_back(bottomleft);
-                vertices.push_back(topright);
-                vertices.push_back(topleft);
+                streetsInAngle2.push_back(StreetLine(bottomright, topright));
 
                 for (j = 0; j < 24; j++) {
                     normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
@@ -133,7 +146,7 @@ StreetMap::StreetMap(RoadPattern pattern, vector<glm::vec2> populationCenters, m
 }
 
 void StreetMap::calculateExtremes(glm::vec3 point, glm::vec3 centerTangent, glm::vec3 centerNormal, map<float, set<float>> waterPoints, map<float, set<float>> parksPoints,
-                                  glm::vec4 &bottomleft, glm::vec4 &bottomright, glm::vec4 &topleft, glm::vec4 &topright) {
+                                  glm::vec4 &bottomleft, glm::vec4 &bottomright, glm::vec4 &topleft, glm::vec4 &topright, float dist) {
     float distance;
     float x;
     float z;
@@ -160,7 +173,7 @@ void StreetMap::calculateExtremes(glm::vec3 point, glm::vec3 centerTangent, glm:
         bottomright2 = glm::vec4(point, 1.0f) + glm::vec4(-distance * centerTangent, 0.0f);
     }
 
-    bottomleft = bottomright + glm::vec4(1.0f * centerNormal, 0.0f);
+    bottomleft = bottomright + glm::vec4(dist * centerNormal, 0.0f);
 
     distance = 0.0f;
     topright = topright2 = glm::vec4(point, 1.0f) + glm::vec4(distance * centerTangent, 0.0f);
@@ -182,5 +195,192 @@ void StreetMap::calculateExtremes(glm::vec3 point, glm::vec3 centerTangent, glm:
         topright2 = glm::vec4(point, 1.0f) + glm::vec4(distance * centerTangent, 0.0f);
     }
 
-    topleft = topright + glm::vec4(1.0f * centerNormal, 0.0f);
+    topleft = topright + glm::vec4(dist * centerNormal, 0.0f);
+}
+
+void StreetMap::nextIteration(map<float, set<float>> waterPoints, map<float, set<float>> parksPoints) {
+    int size1 = streetsInAngle1.size();
+    int size2 = streetsInAngle2.size();
+    int i;
+    int j;
+    int length;
+    float distance;
+    float base;
+    bool safe;
+    glm::vec3 pointTmp;
+    glm::vec4 point;
+    glm::vec4 dir;
+    glm::vec3 va;
+    glm::vec3 vb;
+
+    glm::vec4 topleft;
+    glm::vec4 topright;
+    glm::vec4 bottomleft;
+    glm::vec4 bottomright;
+
+    for (i = 0; i < size1; i++) {
+        if (glm::length(streetsInAngle1[i].endpoint2 - streetsInAngle1[i].endpoint1) < 0.0001) {
+            continue;
+        } 
+        dir = glm::normalize(streetsInAngle1[i].endpoint2 - streetsInAngle1[i].endpoint1);
+        length = floor(glm::length(streetsInAngle1[i].endpoint2 - streetsInAngle1[i].endpoint1));
+        safe = false;
+        point = streetsInAngle1[i].endpoint1 + 6.0f * dir;
+        while (!safe) {
+            point += 0.5f * dir;
+            safe = true;
+            for (j = 0; j < streetsInAngle2.size(); j++) {
+                va[0] = streetsInAngle2[j].endpoint2[0] - streetsInAngle2[j].endpoint1[0];
+                va[1] = streetsInAngle2[j].endpoint2[1] - streetsInAngle2[j].endpoint1[1];
+                va[2] = streetsInAngle2[j].endpoint2[2] - streetsInAngle2[j].endpoint1[2];
+                if (glm::length(va) < 0.0001) {
+                    continue;
+                } 
+
+                vb[0] = point[0] - streetsInAngle2[j].endpoint1[0];
+                vb[1] = point[1] - streetsInAngle2[j].endpoint1[1];
+                vb[2] = point[2] - streetsInAngle2[j].endpoint1[2];
+                distance = (glm::length(glm::cross(va, vb))) / glm::length(va);
+                base = sqrt(glm::length(vb) * glm::length(vb) - distance * distance);
+                // cout << distance << endl;
+                // cout << glm::to_string(va) << endl;
+                // cout << glm::to_string(vb) << endl;
+                // cout << (glm::to_string(glm::cross(va, vb))) << endl;
+                // cout << (glm::length(glm::cross(va, vb))) << endl;
+                // cout << glm::length(va) << endl;
+                // cout << glm::to_string(streetsInAngle1[i].endpoint1) << endl;
+                // cout << diff << " " << glm::to_string(dir) << endl;
+                // cout << glm::to_string(point) << endl;
+                // break;
+                if (distance <= 6.0f && base <= glm::length(va)) {
+                    safe = false;
+                    break;
+                }
+            }
+            // cout << endl;
+
+            if (glm::length(point - streetsInAngle1[i].endpoint2) < 0.5f) {
+                break;
+            }
+        }
+
+        if (glm::length(point - streetsInAngle1[i].endpoint2) < 0.5f) {
+            continue;
+        }
+
+        pointTmp[0] = point[0];
+        pointTmp[1] = point[1];
+        pointTmp[2] = point[2];
+
+        calculateExtremes(pointTmp, centerNormal, centerTangent, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright, 0.5f);
+        // cout << glm::to_string(streetsInAngle1[i].endpoint1) << endl;
+        // cout << diff << " " << glm::to_string(dir) << endl;
+        // cout << glm::to_string(point) << endl;
+        // cout << glm::to_string(pointTmp) << endl;
+        // cout << glm::to_string(bottomleft) << endl;
+        // cout << glm::to_string(bottomright) << endl;
+        // cout << glm::to_string(topleft) << endl;
+        // cout << glm::to_string(topright) << endl << endl;
+
+        vertices.push_back(bottomleft);
+        vertices.push_back(bottomright);
+        vertices.push_back(topright);
+
+        vertices.push_back(bottomleft);
+        vertices.push_back(topright);
+        vertices.push_back(topleft);
+
+        for (j = 0; j < 6; j++) {
+            normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+        }
+
+        for (j = 0; j < 2; j++) {
+            faces.push_back(glm::uvec3(index++, index++, index++));
+        }
+
+        streetsInAngle2.push_back(StreetLine(bottomright, topright));
+    }
+
+    for (i = 0; i < size2; i++) {
+        if (glm::length(streetsInAngle2[i].endpoint2 - streetsInAngle2[i].endpoint1) < 0.0001) {
+            continue;
+        } 
+        dir = glm::normalize(streetsInAngle2[i].endpoint2 - streetsInAngle2[i].endpoint1);
+        length = floor(glm::length(streetsInAngle2[i].endpoint2 - streetsInAngle2[i].endpoint1));
+        safe = false;
+        point = streetsInAngle2[i].endpoint1 + 6.0f * dir;
+        while (!safe) {
+            point += 0.5f * dir;
+            safe = true;
+            for (j = 0; j < streetsInAngle1.size(); j++) {
+                va[0] = streetsInAngle1[j].endpoint2[0] - streetsInAngle1[j].endpoint1[0];
+                va[1] = streetsInAngle1[j].endpoint2[1] - streetsInAngle1[j].endpoint1[1];
+                va[2] = streetsInAngle1[j].endpoint2[2] - streetsInAngle1[j].endpoint1[2];
+                if (glm::length(va) < 0.0001) {
+                    continue;
+                } 
+
+                vb[0] = point[0] - streetsInAngle1[j].endpoint1[0];
+                vb[1] = point[1] - streetsInAngle1[j].endpoint1[1];
+                vb[2] = point[2] - streetsInAngle1[j].endpoint1[2];
+                distance = (glm::length(glm::cross(va, vb))) / glm::length(va);
+                base = sqrt(glm::length(vb) * glm::length(vb) - distance * distance);
+                // cout << distance << endl;
+                // cout << glm::to_string(va) << endl;
+                // cout << glm::to_string(vb) << endl;
+                // cout << (glm::to_string(glm::cross(va, vb))) << endl;
+                // cout << (glm::length(glm::cross(va, vb))) << endl;
+                // cout << glm::length(va) << endl;
+                // cout << glm::to_string(streetsInAngle1[i].endpoint1) << endl;
+                // cout << diff << " " << glm::to_string(dir) << endl;
+                // cout << glm::to_string(point) << endl;
+                // break;
+                if (distance <= 6.0f && base <= glm::length(va)) {
+                    safe = false;
+                    break;
+                }
+            }
+            // cout << endl;
+
+            if (glm::length(point - streetsInAngle2[i].endpoint2) < 0.5f) {
+                break;
+            }
+        }
+
+        if (glm::length(point - streetsInAngle2[i].endpoint2) < 0.5f) {
+            continue;
+        }
+
+        pointTmp[0] = point[0];
+        pointTmp[1] = point[1];
+        pointTmp[2] = point[2];
+
+        calculateExtremes(pointTmp, centerTangent, centerNormal, waterPoints, parksPoints, bottomleft, bottomright, topleft, topright, 0.5f);
+        // cout << glm::to_string(streetsInAngle1[i].endpoint1) << endl;
+        // cout << diff << " " << glm::to_string(dir) << endl;
+        // cout << glm::to_string(point) << endl;
+        // cout << glm::to_string(pointTmp) << endl;
+        // cout << glm::to_string(bottomleft) << endl;
+        // cout << glm::to_string(bottomright) << endl;
+        // cout << glm::to_string(topleft) << endl;
+        // cout << glm::to_string(topright) << endl << endl;
+
+        vertices.push_back(bottomleft);
+        vertices.push_back(bottomright);
+        vertices.push_back(topright);
+
+        vertices.push_back(bottomleft);
+        vertices.push_back(topright);
+        vertices.push_back(topleft);
+
+        for (j = 0; j < 6; j++) {
+            normals.push_back(glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+        }
+
+        for (j = 0; j < 2; j++) {
+            faces.push_back(glm::uvec3(index++, index++, index++));
+        }
+
+        streetsInAngle1.push_back(StreetLine(bottomright, topright));
+    }
 }
